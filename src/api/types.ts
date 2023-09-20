@@ -20,8 +20,8 @@ export interface Coordinates {
 }
 
 export interface SearchQueryParams {
-    breeds: string
-    zipCodes: string
+    breeds: string[]
+    zipCodes: string[]
     ageMin: string
     ageMax: string
 }

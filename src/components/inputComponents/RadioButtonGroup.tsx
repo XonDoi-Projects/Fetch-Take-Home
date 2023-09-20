@@ -47,22 +47,23 @@ export const RadioButtonGroup: FunctionComponent<RadioButtonGroupProps> = (props
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            height: '30px',
-                            width: '30px',
+                            height: '20px',
+                            width: '20px',
                             borderRadius: '50%',
                             padding: '0px',
+                            backgroundColor: 'transparent',
                             ...props.sx
                         }}
                     >
                         {props.value !== button ? (
                             <BiRadioCircle
-                                color={light ? colors.light.background : colors.dark.background}
-                                style={{ fontSize: '30px' }}
+                                color={light ? colors.light.foreground : colors.dark.foreground}
+                                style={{ fontSize: '20px' }}
                             />
                         ) : (
                             <BiRadioCircleMarked
-                                color={light ? colors.light.background : colors.dark.background}
-                                style={{ fontSize: '30px' }}
+                                color={light ? colors.light.foreground : colors.dark.foreground}
+                                style={{ fontSize: '20px' }}
                             />
                         )}
                     </Button>
@@ -71,7 +72,7 @@ export const RadioButtonGroup: FunctionComponent<RadioButtonGroupProps> = (props
                         sx={{
                             fontWeight: 500,
                             marginRight: '20px',
-                            color: light ? colors.light.background : colors.dark.background
+                            color: light ? colors.light.foreground : colors.dark.foreground
                         }}
                     >
                         {button}

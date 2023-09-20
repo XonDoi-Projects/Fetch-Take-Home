@@ -110,6 +110,7 @@ export const Login = () => {
                         backgroundColor: light ? colors.light.accent : colors.dark.accent,
                         width: mobile.mobile ? '100%' : '100px'
                     }}
+                    swapHover
                 >
                     Login
                 </Button>
@@ -125,7 +126,7 @@ export const Login = () => {
                 <Card sx={{ height: '400px', width: '500px' }}>{renderLoginForm()}</Card>
             )}
 
-            <FadeInOut show={showSnackbar}>
+            <FadeInOut show={showSnackbar} sx={{ zIndex: 3 }}>
                 <FixedDiv
                     sx={{
                         bottom: '50px',
@@ -138,7 +139,8 @@ export const Login = () => {
                         backgroundColor: snackbar?.color,
                         borderRadius: '35px',
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        zIndex: 3
                     }}
                 >
                     <Typography

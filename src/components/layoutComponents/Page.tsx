@@ -1,7 +1,6 @@
 import { CSSProperties, FunctionComponent, ReactNode } from 'react'
 import { Container } from './Container'
 import { Header } from './Header'
-import { Footer } from './Footer'
 import { Spinner } from './Spinner'
 import { Typography } from './Typography'
 import { useDarkTheme, useSize } from '../../providers'
@@ -48,7 +47,7 @@ export const Page: FunctionComponent<PageProps> = (props) => {
         >
             <Header />
             {props.children}
-            <Footer />
+            {/* <Footer /> */}
         </Container>
     )
 }

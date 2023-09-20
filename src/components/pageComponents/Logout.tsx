@@ -73,7 +73,7 @@ export const Logout = () => {
                 <Typography>Logging you out!</Typography>
                 {loading ? <Spinner /> : <></>}
             </Container>
-            <FadeInOut show={showSnackbar}>
+            <FadeInOut show={showSnackbar} sx={{ zIndex: 3 }}>
                 <FixedDiv
                     sx={{
                         bottom: '50px',
@@ -86,7 +86,8 @@ export const Logout = () => {
                         backgroundColor: snackbar?.color,
                         borderRadius: '35px',
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        zIndex: 3
                     }}
                 >
                     <Typography

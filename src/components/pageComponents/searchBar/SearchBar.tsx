@@ -1,15 +1,19 @@
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Dog, SearchQueryParams } from '../../../api'
 import { Container, FadeInOut, FixedDiv } from '../../layoutComponents'
-import { TextField } from '../../inputComponents'
+import { Button, TextField } from '../../inputComponents'
 import { colors } from '../../Colors'
 import { Typography } from '../../layoutComponents/Typography'
-import { useSize } from '../../../providers'
+import { useDarkTheme } from '../../../providers'
 import { FETCH_BASE_URL } from '../../env'
+import { BreedFilter } from './BreedFilter'
+import { ZipCodeFilter } from './ZipCodeFilter'
 
 export interface SearchBarProps {
     from: string
+    setFrom: (value: string) => void
     size: string
+    setSize: (value: string) => void
 
     breeds: string[]
     zipCodes: string[]
@@ -17,57 +21,52 @@ export interface SearchBarProps {
     ageMax?: number
     setBreeds: (value: string[]) => void
     setZipCodes: (value: string[]) => void
-    setAgeMin: (value: number) => void
-    setAgeMax: (value: number) => void
+    setAgeMin: (value?: number) => void
+    setAgeMax: (value?: number) => void
 
     setDogs: (value: Dog[]) => void
+
+    setLoading: (value: boolean) => void
+
+    dirty: boolean
+    setDirty: (value: boolean) => void
+
+    setTotal: (value: string) => void
 }
 
-export const SearchBar: FunctionComponent<SearchBarProps> = ({ setDogs, ...props }) => {
-    const mobile = useSize()
+export const SearchBar: FunctionComponent<SearchBarProps> = ({
+    dirty,
+    setDirty,
+    setDogs,
+    setTotal,
+    setLoading,
+    ...props
+}) => {
+    const { light } = useDarkTheme()
 
     const [snackbar, setSnackbar] = useState<{ message: string; color: string }>()
     const [showSnackbar, setShowSnackbar] = useState(false)
 
     const timeoutRef = useRef<NodeJS.Timeout>()
-    const searchRef = useRef<NodeJS.Timeout>()
-
-    const [searchInput, setSearchInput] = useState('')
-    const [searchDebounce, setSearchDebounce] = useState('')
 
     const queryParams: SearchQueryParams = useMemo(
         () => ({
             ageMax: props.ageMax?.toString() || '',
             ageMin: props.ageMin?.toString() || '',
-            breeds: props.breeds.join(','),
-            zipCodes: props.zipCodes.join(',')
+            breeds: props.breeds,
+            zipCodes: props.zipCodes
         }),
         [props.ageMax, props.ageMin, props.breeds, props.zipCodes]
     )
 
-    useEffect(() => {
-        if (timeoutRef.current !== undefined) {
-            clearTimeout(timeoutRef.current)
-        }
+    const handleClear = () => {
+        props.setAgeMax(undefined)
+        props.setAgeMin(undefined)
+        props.setBreeds([])
+        props.setZipCodes([])
 
-        if (showSnackbar) {
-            timeoutRef.current = setTimeout(() => {
-                setShowSnackbar(false)
-            }, 3000)
-        }
-    }, [showSnackbar])
-
-    useEffect(() => {
-        if (searchRef.current !== undefined) {
-            clearTimeout(searchRef.current)
-        }
-
-        if (searchInput) {
-            searchRef.current = setTimeout(() => {
-                setSearchDebounce(searchInput)
-            }, 500)
-        }
-    }, [searchInput])
+        setDirty(true)
+    }
 
     useEffect(() => {
         if (timeoutRef.current !== undefined) {
@@ -82,56 +81,72 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({ setDogs, ...props
     }, [showSnackbar])
 
     const getQueryString = useCallback(() => {
-        const keys = Object.keys(queryParams)
-
         type SearchKeys = keyof SearchQueryParams
 
-        const filteredKeys = keys.filter((key) => queryParams[key as SearchKeys])
+        const searchParams = new URLSearchParams()
 
-        return filteredKeys
-            .map(
-                (key) =>
-                    `${encodeURIComponent(key)}=${encodeURIComponent(
-                        queryParams[key as SearchKeys]
-                    )}`
-            )
-            .join('&')
+        for (const key in queryParams) {
+            if (
+                Array.isArray(queryParams[key as SearchKeys]) &&
+                queryParams[key as SearchKeys].length
+            ) {
+                for (const value of queryParams[key as SearchKeys]) {
+                    searchParams.append(key, value)
+                }
+            } else if (
+                !Array.isArray(queryParams[key as SearchKeys]) &&
+                queryParams[key as SearchKeys]
+            ) {
+                searchParams.set(key, queryParams[key as SearchKeys] as string)
+            }
+        }
+
+        return searchParams.toString()
     }, [queryParams])
 
     const pullData = useCallback(async () => {
-        try {
-            const queryString = getQueryString()
-            const result = await fetch(
-                `${FETCH_BASE_URL}/dogs/search?${queryString || ''}&size=${props.size || ''}&from=${
-                    props.from || ''
-                }`,
-                {
+        if (dirty) {
+            setLoading(true)
+            try {
+                const queryString = getQueryString()
+
+                const result = await fetch(
+                    `${FETCH_BASE_URL}/dogs/search?${queryString || ''}&size=${
+                        props.size || ''
+                    }&from=${props.from || ''}`,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        method: 'GET',
+                        credentials: 'include'
+                    }
+                ).then((res) => res.json())
+
+                const dogIds = result.resultIds
+
+                // if (dogIds.length) {
+                const dogs: Dog[] = await fetch(`${FETCH_BASE_URL}/dogs`, {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    method: 'GET',
+                    body: JSON.stringify(dogIds),
+                    method: 'POST',
                     credentials: 'include'
-                }
-            ).then((res) => res.json())
+                }).then((res) => res.json())
 
-            const dogIds = result.resultIds
-
-            const dogs: Dog[] = await fetch(`${FETCH_BASE_URL}/dogs`, {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dogIds),
-                method: 'POST',
-                credentials: 'include'
-            }).then((res) => res.json())
-
-            setDogs(dogs)
-        } catch (e) {
-            console.log(e)
-            setSnackbar({ message: 'Could not get breeds!', color: colors.light.error })
-            setShowSnackbar(true)
+                setDogs(dogs)
+                setTotal(result.total)
+                // }
+                setDirty(false)
+            } catch (e) {
+                console.log(e)
+                setSnackbar({ message: 'Could not get dogs!', color: colors.light.error })
+                setShowSnackbar(true)
+            }
+            setLoading(false)
         }
-    }, [getQueryString, props.from, props.size, setDogs])
+    }, [dirty, getQueryString, props.from, props.size, setDirty, setDogs, setLoading, setTotal])
 
     useEffect(() => {
         pullData()
@@ -140,38 +155,95 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({ setDogs, ...props
     return (
         <>
             <Container
-                sx={{ padding: '20px 0px', flexDirection: 'column', flexWrap: 'wrap', gap: '10px' }}
+                sx={{
+                    flex: 1,
+                    padding: '20px',
+                    flexDirection: 'column',
+                    flexWrap: 'wrap',
+                    gap: '20px',
+                    maxWidth: '400px',
+                    borderRadius: '4px',
+                    border: '1px solid',
+                    borderColor: light ? colors.light.accent : colors.dark.accent
+                }}
             >
-                <TextField value={searchInput} onChange={setSearchInput} label="Breed" />
-                <Container sx={{ gap: '10px' }}>
+                <Container
+                    sx={{
+                        flexDirection: 'row',
+                        gap: '10px',
+                        flexWrap: 'wrap',
+                        alignItems: 'center'
+                    }}
+                >
                     <TextField
                         value={props.ageMin?.toString() || ''}
-                        onChange={(e) => props.setAgeMin(parseInt(e))}
+                        onChange={(e) => {
+                            if (/^[0-9]*$/i.test(e)) {
+                                props.setAgeMin(e ? parseInt(e) : undefined)
+                            }
+                        }}
                         label="Min Age"
+                        sx={{ width: '150px' }}
                     />
                     <TextField
                         value={props.ageMax?.toString() || ''}
-                        onChange={(e) => props.setAgeMax(parseInt(e))}
+                        onChange={(e) => {
+                            if (/^[0-9]*$/i.test(e)) {
+                                props.setAgeMax(e ? parseInt(e) : undefined)
+                            }
+                        }}
                         label="Max Age"
+                        sx={{ width: '150px' }}
                     />
                 </Container>
-                {/* //Zipcode builder */}
+                <ZipCodeFilter zipCodes={props.zipCodes} setZipCodes={props.setZipCodes} />
+                <BreedFilter breeds={props.breeds} setBreeds={props.setBreeds} />
+                <Container sx={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
+                    <Button
+                        onClick={() => setDirty(true)}
+                        sx={{
+                            borderRadius: '19px',
+                            color: light
+                                ? colors.light.accentForeground
+                                : colors.dark.accentForeground,
+                            backgroundColor: light ? colors.light.accent : colors.dark.accent,
+                            width: '100px'
+                        }}
+                        swapHover
+                    >
+                        Apply
+                    </Button>
+                    <Button
+                        onClick={handleClear}
+                        sx={{
+                            borderRadius: '19px',
+                            color: light ? colors.light.accent : colors.dark.accent,
+                            backgroundColor: light
+                                ? colors.light.accentForeground
+                                : colors.dark.accentForeground,
+                            width: '100px'
+                        }}
+                    >
+                        Clear
+                    </Button>
+                </Container>
             </Container>
 
-            <FadeInOut show={showSnackbar}>
+            <FadeInOut show={showSnackbar} sx={{ zIndex: 3 }}>
                 <FixedDiv
                     sx={{
                         bottom: '50px',
                         left: '50%',
                         transform: 'translate(-50%,0)',
                         height: '70px',
-                        maxWidth: mobile.mobile ? mobile.size?.width + 'px' : '400px',
+                        maxWidth: '400px',
                         padding: '0px 20px',
                         overflow: 'hidden',
                         backgroundColor: snackbar?.color,
                         borderRadius: '35px',
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        zIndex: 3
                     }}
                 >
                     <Typography

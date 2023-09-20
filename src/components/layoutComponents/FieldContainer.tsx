@@ -49,12 +49,13 @@ export const FieldContainer: FunctionComponent<FieldContainerProps> = (props) =>
                         ? colors.dark.background
                         : colors.light.background,
                     borderRadius: '4px',
-                    marginBottom: '0px'
+                    marginBottom: '0px',
+                    alignItems: 'center'
                 }}
             >
                 {props.children}
             </Container>
-            <Container sx={{ height: '12px' }}>
+            <Container sx={{ height: '19px' }}>
                 <Typography
                     variant="small"
                     sx={{

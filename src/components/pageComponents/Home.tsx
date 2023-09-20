@@ -15,9 +15,14 @@ export const Home = () => {
     const [ageMin, setAgeMin] = useState<number>()
     const [ageMax, setAgeMax] = useState<number>()
 
-    const [size, setSize] = useState('')
-    const [from, setFrom] = useState('')
+    const [size, setSize] = useState('25')
+    const [from, setFrom] = useState('0')
     const [dogs, setDogs] = useState<Dog[]>([])
+    const [total, setTotal] = useState<string>('')
+
+    const [loading, setLoading] = useState(false)
+
+    const [dirty, setDirty] = useState(true)
 
     //api call to get dogs
 
@@ -26,32 +31,29 @@ export const Home = () => {
             sx={{
                 flexDirection: 'column',
                 flex: 1,
-                padding: mobile.mobile ? '20px' : '0px 20px 20px 20px',
-                marginTop: '50px',
+                padding: '20px',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                overflow: 'auto'
+                overflow: 'hidden'
             }}
         >
             <Container
                 sx={{
                     flexDirection: 'row',
                     flex: 1,
-                    width: '1040px'
+                    gap: '50px',
+                    width: '100%',
+                    height: '100%'
                 }}
             >
-                <Container
-                    sx={{
-                        flexDirection: 'column',
-                        flex: 1,
-                        maxWidth: '1040px'
-                    }}
-                >
-                    <Typography variant="title">{`Welcome ${user?.name},`}</Typography>
-                    <Typography>Let's find you the perfect dog!</Typography>
+                {mobile.mobile ? (
+                    <></>
+                ) : (
                     <SearchBar
                         size={size}
+                        setSize={setSize}
                         from={from}
+                        setFrom={setFrom}
                         breeds={breeds}
                         setBreeds={setBreeds}
                         zipCodes={zipCodes}
@@ -61,8 +63,27 @@ export const Home = () => {
                         ageMax={ageMax}
                         setAgeMax={setAgeMax}
                         setDogs={setDogs}
+                        setLoading={setLoading}
+                        dirty={dirty}
+                        setDirty={setDirty}
+                        setTotal={setTotal}
                     />
-                    <DogGrid dogs={dogs} setFrom={setFrom} setSize={setSize} />
+                )}
+                <Container sx={{ flexDirection: 'column', flex: 1, padding: '10px' }}>
+                    <Typography variant="title">{`Welcome ${user?.name},`}</Typography>
+                    <Typography sx={{ marginBottom: '20px' }}>
+                        Let's find you the perfect dog!
+                    </Typography>
+                    <DogGrid
+                        total={total}
+                        dogs={dogs}
+                        from={from}
+                        setFrom={setFrom}
+                        size={size}
+                        setSize={setSize}
+                        loading={loading}
+                        setDirty={setDirty}
+                    />
                 </Container>
             </Container>
         </Container>
