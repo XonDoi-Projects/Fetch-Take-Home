@@ -1,6 +1,5 @@
 import { CSSProperties, FunctionComponent, useEffect, useRef, useState } from 'react'
 import { Container } from './Container'
-import { Card } from './Card'
 import { BiMenu, BiAdjust } from 'react-icons/bi'
 import { colors } from '../Colors'
 import { Link } from 'react-router-dom'
@@ -8,6 +7,7 @@ import { useSize, useDarkTheme } from '../../providers'
 import { Button } from '../inputComponents'
 import { Typography } from './Typography'
 import { useClickOutside } from '../hooks'
+import { Popup } from './Popup'
 
 export interface HeaderProps {
     sx?: CSSProperties
@@ -117,7 +117,7 @@ export const Header: FunctionComponent<HeaderProps> = (props) => {
                             >
                                 <BiMenu style={{ fontSize: '30px' }} />
                             </Button>
-                            <Container
+                            {/* <Container
                                 ref={popupRef}
                                 sx={{
                                     position: 'absolute',
@@ -138,23 +138,33 @@ export const Header: FunctionComponent<HeaderProps> = (props) => {
                                         height: '100%',
                                         borderRadius: '0px'
                                     }}
-                                >
-                                    {nav.map((item, index) => (
-                                        <Link
-                                            key={index}
-                                            to={item.link}
-                                            style={{
-                                                textDecoration: 'none',
-                                                marginLeft: '20px'
-                                            }}
-                                        >
-                                            <Typography variant="linker" sx={{ fontWeight: 600 }}>
-                                                {item.name}
-                                            </Typography>
-                                        </Link>
-                                    ))}
-                                </Card>
-                            </Container>
+                                > */}
+                            <Popup
+                                popupRef={popupRef}
+                                show={show}
+                                sx={{ width: size?.width, top: navDOMRect?.height, left: 0 }}
+                            >
+                                {nav.map((item, index) => (
+                                    <Link
+                                        key={index}
+                                        to={item.link}
+                                        style={{
+                                            display: 'flex',
+                                            textDecoration: 'none',
+                                            marginLeft: '20px',
+                                            height: '50px',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <Typography variant="linker" sx={{ fontWeight: 600 }}>
+                                            {item.name}
+                                        </Typography>
+                                    </Link>
+                                ))}
+                            </Popup>
+
+                            {/* </Card>
+                            </Container> */}
                         </>
                     )}
                 </Container>

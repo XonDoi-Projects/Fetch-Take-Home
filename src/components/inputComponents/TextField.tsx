@@ -1,4 +1,13 @@
-import { CSSProperties, ChangeEvent, FunctionComponent, ReactNode, useState } from 'react'
+import {
+    CSSProperties,
+    ChangeEvent,
+    ForwardedRef,
+    FunctionComponent,
+    ReactNode,
+    Ref,
+    forwardRef,
+    useState
+} from 'react'
 import styled from '@emotion/styled'
 import { FieldContainer } from '../layoutComponents'
 import { useDarkTheme } from '../../providers'
@@ -11,9 +20,11 @@ export interface TextFieldProps extends StyledInputProps {
     fieldContainerSx?: CSSProperties
     value: string
     onChange: (value: string) => void
+    onFocus?: () => void
     onBlur?: (value: string) => void
     suffix?: ReactNode
     type?: 'text' | 'password'
+    ref?: Ref<HTMLInputElement>
 }
 
 interface StyledInputProps {
@@ -39,34 +50,36 @@ const StyledInput = styled.input<StyledInputProps>(
         }`
 )
 
-export const TextField: FunctionComponent<TextFieldProps> = ({
-    value,
-    onChange,
-    sx,
-    fieldContainerSx,
-    ...props
-}) => {
-    const { light } = useDarkTheme()
-    const [isFocus, setIsFocus] = useState(false)
+export const TextField: FunctionComponent<TextFieldProps> = forwardRef(
+    ({ value, onChange, sx, fieldContainerSx, ...props }, ref: ForwardedRef<HTMLInputElement>) => {
+        const { light } = useDarkTheme()
+        const [isFocus, setIsFocus] = useState(false)
 
-    const onValueChange = (value: ChangeEvent<HTMLInputElement>) => {
-        onChange(value.target.value)
+        const onValueChange = (value: ChangeEvent<HTMLInputElement>) => {
+            onChange(value.target.value)
+        }
+
+        return (
+            <FieldContainer sx={fieldContainerSx} {...props} isFocus={isFocus}>
+                <StyledInput
+                    ref={ref}
+                    type={props.type || 'text'}
+                    value={value}
+                    onChange={onValueChange}
+                    sx={{ color: light ? colors.dark.background : colors.light.background, ...sx }}
+                    onFocus={() => {
+                        setIsFocus(true)
+                        props.onFocus && props.onFocus()
+                    }}
+                    onBlur={(e) => {
+                        setIsFocus(false)
+                        props.onBlur && props.onBlur(e.target.value)
+                    }}
+                />
+                {props.suffix ? props.suffix : <></>}
+            </FieldContainer>
+        )
     }
+)
 
-    return (
-        <FieldContainer sx={fieldContainerSx} {...props} isFocus={isFocus}>
-            <StyledInput
-                type={props.type || 'text'}
-                value={value}
-                onChange={onValueChange}
-                sx={{ color: light ? colors.dark.background : colors.light.background, ...sx }}
-                onFocus={() => setIsFocus(true)}
-                onBlur={(e) => {
-                    setIsFocus(false)
-                    props.onBlur && props.onBlur(e.target.value)
-                }}
-            />
-            {props.suffix ? props.suffix : <></>}
-        </FieldContainer>
-    )
-}
+TextField.displayName = 'TextField'

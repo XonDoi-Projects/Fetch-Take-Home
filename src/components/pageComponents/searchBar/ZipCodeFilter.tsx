@@ -57,19 +57,20 @@ export const ZipCodeFilter: FunctionComponent<ZipCodeFilterProps> = (props) => {
                         setZipCode(e)
                     }
                 }}
-                label="Zip Codes"
+                label="Zipcodes"
+                fieldContainerSx={{ paddingRight: '10px' }}
                 suffix={
                     <Button
                         sx={{
-                            width: '30px',
-                            height: '30px',
+                            width: '20px',
+                            height: '20px',
                             borderRadius: '50%',
                             padding: '0px',
                             backgroundColor: 'transparent'
                         }}
                         onClick={handleAddZipCode}
                     >
-                        <BiPlus style={{ fontSize: '30px' }} />
+                        <BiPlus style={{ fontSize: '15px' }} />
                     </Button>
                 }
             />

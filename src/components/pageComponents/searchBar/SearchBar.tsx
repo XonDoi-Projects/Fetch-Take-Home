@@ -8,6 +8,7 @@ import { useDarkTheme } from '../../../providers'
 import { FETCH_BASE_URL } from '../../env'
 import { BreedFilter } from './BreedFilter'
 import { ZipCodeFilter } from './ZipCodeFilter'
+import { Sort } from '../grid/DogGrid'
 
 export interface SearchBarProps {
     from: string
@@ -32,6 +33,8 @@ export interface SearchBarProps {
     setDirty: (value: boolean) => void
 
     setTotal: (value: string) => void
+
+    sort: Sort
 }
 
 export const SearchBar: FunctionComponent<SearchBarProps> = ({
@@ -113,7 +116,9 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                 const result = await fetch(
                     `${FETCH_BASE_URL}/dogs/search?${queryString || ''}&size=${
                         props.size || ''
-                    }&from=${props.from || ''}`,
+                    }&from=${props.from || ''}&sort=${Object.keys(props.sort)[0]}:${
+                        Object.values(props.sort)[0]
+                    }`,
                     {
                         headers: {
                             'Content-Type': 'application/json'
@@ -146,7 +151,17 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
             }
             setLoading(false)
         }
-    }, [dirty, getQueryString, props.from, props.size, setDirty, setDogs, setLoading, setTotal])
+    }, [
+        dirty,
+        getQueryString,
+        props.from,
+        props.size,
+        props.sort,
+        setDirty,
+        setDogs,
+        setLoading,
+        setTotal
+    ])
 
     useEffect(() => {
         pullData()
@@ -182,7 +197,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                                 props.setAgeMin(e ? parseInt(e) : undefined)
                             }
                         }}
-                        label="Min Age"
+                        label="Min Age (Years)"
                         sx={{ width: '150px' }}
                     />
                     <TextField
@@ -192,13 +207,13 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                                 props.setAgeMax(e ? parseInt(e) : undefined)
                             }
                         }}
-                        label="Max Age"
+                        label="Max Age (Years)"
                         sx={{ width: '150px' }}
                     />
                 </Container>
                 <ZipCodeFilter zipCodes={props.zipCodes} setZipCodes={props.setZipCodes} />
                 <BreedFilter breeds={props.breeds} setBreeds={props.setBreeds} />
-                <Container sx={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
+                <Container sx={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Button
                         onClick={() => setDirty(true)}
                         sx={{
@@ -217,12 +232,13 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                         onClick={handleClear}
                         sx={{
                             borderRadius: '19px',
-                            color: light ? colors.light.accent : colors.dark.accent,
-                            backgroundColor: light
+                            color: light
                                 ? colors.light.accentForeground
                                 : colors.dark.accentForeground,
+                            backgroundColor: light ? colors.light.accent : colors.dark.accent,
                             width: '100px'
                         }}
+                        swapHover
                     >
                         Clear
                     </Button>

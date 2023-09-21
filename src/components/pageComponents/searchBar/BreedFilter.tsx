@@ -5,6 +5,7 @@ import { FETCH_BASE_URL } from '../../env'
 import { colors } from '../../Colors'
 import { Typography } from '../../layoutComponents/Typography'
 import { cloneDeep } from 'lodash'
+import { useDarkTheme } from '../../../providers'
 
 export interface BreedFilterProps {
     breeds: string[]
@@ -12,6 +13,7 @@ export interface BreedFilterProps {
 }
 
 export const BreedFilter: FunctionComponent<BreedFilterProps> = (props) => {
+    const { light } = useDarkTheme()
     const [allBreeds, setAllBreeds] = useState<string[]>([])
 
     const [loading, setLoading] = useState(false)
@@ -74,19 +76,39 @@ export const BreedFilter: FunctionComponent<BreedFilterProps> = (props) => {
     }
 
     return (
-        <Container sx={{ flexDirection: 'column', height: '500px', overflow: 'auto' }}>
-            {loading ? (
-                <Spinner swapColor />
-            ) : (
-                allBreeds.map((breed, index) => (
-                    <Checkbox
-                        key={breed + index}
-                        value={props.breeds.includes(breed) ? 'yes' : 'no'}
-                        onChange={(e) => handleBreed(e, breed)}
-                        label={breed}
-                    />
-                ))
-            )}
+        <Container sx={{ flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+            <Typography
+                variant="field"
+                sx={{
+                    color: light ? colors.dark.background : colors.light.background,
+                    marginBottom: '0px'
+                }}
+            >
+                Breed
+            </Typography>
+            <Container
+                sx={{
+                    flexDirection: 'column',
+                    flex: 1,
+                    overflow: 'auto'
+                }}
+            >
+                {loading ? (
+                    <Container sx={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Spinner swapColor />
+                    </Container>
+                ) : (
+                    allBreeds.map((breed, index) => (
+                        <Checkbox
+                            key={breed + index}
+                            value={props.breeds.includes(breed) ? 'yes' : 'no'}
+                            onChange={(e) => handleBreed(e, breed)}
+                            label={breed}
+                        />
+                    ))
+                )}
+            </Container>
+
             <FadeInOut show={showSnackbar} sx={{ zIndex: 3 }}>
                 <FixedDiv
                     sx={{

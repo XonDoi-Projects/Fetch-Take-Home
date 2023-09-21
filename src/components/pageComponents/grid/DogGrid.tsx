@@ -3,9 +3,13 @@ import { Dog } from '../../../api'
 import { Container, Spinner } from '../../layoutComponents'
 import { DogCard } from './DogCard'
 import { Typography } from '../../layoutComponents/Typography'
-import { Button, RadioButtonGroup } from '../../inputComponents'
-import { colors } from '../../Colors'
-import { useDarkTheme } from '../../../providers'
+import { Autocomplete, Button } from '../../inputComponents'
+import { isEqual } from 'lodash'
+import { BiChevronLeft, BiChevronRight } from 'react-icons/bi'
+
+export interface Sort {
+    [field: string]: 'asc' | 'desc'
+}
 
 export interface DogGridProps {
     total: string
@@ -14,6 +18,8 @@ export interface DogGridProps {
     setSize: (value: string) => void
     from: string
     setFrom: (value: string) => void
+    sort: Sort
+    setSort: (value: Sort) => void
 
     loading: boolean
 
@@ -21,7 +27,6 @@ export interface DogGridProps {
 }
 
 export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
-    const { light } = useDarkTheme()
     const handleSize = (value: string) => {
         props.setSize(value)
         props.setDirty(true)
@@ -39,8 +44,39 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
         props.setDirty(true)
     }
 
-    console.log(props.from, props.size, props.total)
+    const handleSort = (value: string) => {
+        if (value === 'Breed A-Z') {
+            props.setSort({ breed: 'asc' })
+        } else if (value === 'Breed Z-A') {
+            props.setSort({ breed: 'desc' })
+        } else if (value === 'Name A-Z') {
+            props.setSort({ name: 'asc' })
+        } else if (value === 'Name Z-A') {
+            props.setSort({ name: 'desc' })
+        } else if (value === 'Age Ascending') {
+            props.setSort({ age: 'asc' })
+        } else {
+            props.setSort({ age: 'desc' })
+        }
 
+        props.setDirty(true)
+    }
+
+    const getValue = () => {
+        if (isEqual(props.sort, { breed: 'asc' })) {
+            return 'Breed A-Z'
+        } else if (isEqual(props.sort, { breed: 'desc' })) {
+            return 'Breed Z-A'
+        } else if (isEqual(props.sort, { name: 'asc' })) {
+            return 'Name A-Z'
+        } else if (isEqual(props.sort, { name: 'desc' })) {
+            return 'Name Z-A'
+        } else if (isEqual(props.sort, { age: 'asc' })) {
+            return 'Age Ascending'
+        } else {
+            return 'Age Descending'
+        }
+    }
     return (
         <Container
             sx={{
@@ -72,12 +108,33 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
                         alignItems: 'flex-end'
                     }}
                 >
-                    <RadioButtonGroup
-                        buttonList={['25', '50', '100']}
-                        direction="right"
-                        value={props.size}
-                        onChange={handleSize}
-                    />
+                    <Container
+                        sx={{
+                            flexDirection: 'row',
+                            width: '100%',
+                            justifyContent: 'space-between'
+                        }}
+                    >
+                        <Autocomplete
+                            value={getValue() as string}
+                            onChange={handleSort}
+                            list={[
+                                'Breed A-Z',
+                                'Breed Z-A',
+                                'Age Ascending',
+                                'Age Descending',
+                                'Name A-Z',
+                                'Name Z-A'
+                            ]}
+                            sx={{ width: '120px' }}
+                        />
+                        <Autocomplete
+                            value={props.size}
+                            onChange={handleSize}
+                            list={['25', '50', '100']}
+                            sx={{ width: '30px' }}
+                        />
+                    </Container>
                     <Container
                         sx={{
                             flexDirection: 'row',
@@ -94,47 +151,52 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
                             <DogCard key={dog.breed + index} dog={dog} />
                         ))}
                     </Container>
-                    <Container sx={{ flexDirection: 'row', gap: '10px' }}>
-                        {parseInt(props.from) <= 0 ? (
-                            <></>
-                        ) : (
-                            <Button
-                                onClick={handlePrevious}
-                                sx={{
-                                    borderRadius: '19px',
-                                    color: light
-                                        ? colors.light.accentForeground
-                                        : colors.dark.accentForeground,
-                                    backgroundColor: light
-                                        ? colors.light.accent
-                                        : colors.dark.accent,
-                                    width: '100px'
-                                }}
-                                swapHover
-                            >
-                                Previous
-                            </Button>
-                        )}
-                        {parseInt(props.from) + parseInt(props.size) >= parseInt(props.total) ? (
-                            <></>
-                        ) : (
-                            <Button
-                                onClick={handleNext}
-                                sx={{
-                                    borderRadius: '19px',
-                                    color: light
-                                        ? colors.light.accentForeground
-                                        : colors.dark.accentForeground,
-                                    backgroundColor: light
-                                        ? colors.light.accent
-                                        : colors.dark.accent,
-                                    width: '100px'
-                                }}
-                                swapHover
-                            >
-                                Next
-                            </Button>
-                        )}
+                    <Container
+                        sx={{
+                            flexDirection: 'row',
+                            width: '100%',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}
+                    >
+                        <Typography variant="small">{`Showing ${props.from} to ${
+                            parseInt(props.from) + parseInt(props.size)
+                        } from ${props.total}`}</Typography>
+                        <Container sx={{ flexDirection: 'row', gap: '10px' }}>
+                            {parseInt(props.from) <= 0 ? (
+                                <></>
+                            ) : (
+                                <Button
+                                    onClick={handlePrevious}
+                                    sx={{
+                                        width: '30px',
+                                        height: '30px',
+                                        borderRadius: '50%',
+                                        padding: '0px',
+                                        backgroundColor: 'transparent'
+                                    }}
+                                >
+                                    <BiChevronLeft style={{ fontSize: '30px' }} />
+                                </Button>
+                            )}
+                            {parseInt(props.from) + parseInt(props.size) >=
+                            parseInt(props.total) ? (
+                                <></>
+                            ) : (
+                                <Button
+                                    onClick={handleNext}
+                                    sx={{
+                                        width: '30px',
+                                        height: '30px',
+                                        borderRadius: '50%',
+                                        padding: '0px',
+                                        backgroundColor: 'transparent'
+                                    }}
+                                >
+                                    <BiChevronRight style={{ fontSize: '30px' }} />
+                                </Button>
+                            )}
+                        </Container>
                     </Container>
                 </Container>
             ) : (

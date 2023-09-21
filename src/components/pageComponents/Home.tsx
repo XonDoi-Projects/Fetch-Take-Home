@@ -4,7 +4,7 @@ import { Container } from '../layoutComponents'
 import { Typography } from '../layoutComponents/Typography'
 import { SearchBar } from './searchBar'
 import { Dog } from '../../api'
-import { DogGrid } from './grid/DogGrid'
+import { DogGrid, Sort } from './grid/DogGrid'
 
 export const Home = () => {
     const mobile = useSize()
@@ -19,6 +19,7 @@ export const Home = () => {
     const [from, setFrom] = useState('0')
     const [dogs, setDogs] = useState<Dog[]>([])
     const [total, setTotal] = useState<string>('')
+    const [sort, setSort] = useState<Sort>({ breed: 'asc' })
 
     const [loading, setLoading] = useState(false)
 
@@ -67,6 +68,7 @@ export const Home = () => {
                         dirty={dirty}
                         setDirty={setDirty}
                         setTotal={setTotal}
+                        sort={sort}
                     />
                 )}
                 <Container sx={{ flexDirection: 'column', flex: 1, padding: '10px' }}>
@@ -83,6 +85,8 @@ export const Home = () => {
                         setSize={setSize}
                         loading={loading}
                         setDirty={setDirty}
+                        sort={sort}
+                        setSort={setSort}
                     />
                 </Container>
             </Container>

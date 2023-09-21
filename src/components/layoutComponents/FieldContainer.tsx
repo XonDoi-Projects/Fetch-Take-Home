@@ -50,7 +50,8 @@ export const FieldContainer: FunctionComponent<FieldContainerProps> = (props) =>
                         : colors.light.background,
                     borderRadius: '4px',
                     marginBottom: '0px',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    ...props.sx
                 }}
             >
                 {props.children}
