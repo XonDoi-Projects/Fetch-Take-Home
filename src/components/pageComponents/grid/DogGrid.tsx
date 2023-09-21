@@ -6,6 +6,8 @@ import { Typography } from '../../layoutComponents/Typography'
 import { Autocomplete, Button } from '../../inputComponents'
 import { isEqual } from 'lodash'
 import { BiChevronLeft, BiChevronRight } from 'react-icons/bi'
+import { colors } from '../../Colors'
+import { useDarkTheme } from '../../../providers'
 
 export interface Sort {
     [field: string]: 'asc' | 'desc'
@@ -27,6 +29,8 @@ export interface DogGridProps {
 }
 
 export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
+    const { light } = useDarkTheme()
+
     const handleSize = (value: string) => {
         props.setSize(value)
         props.setDirty(true)
@@ -82,7 +86,7 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
             sx={{
                 flexDirection: 'row',
                 flex: 1,
-                maxWidth: '1090px',
+                maxWidth: '1150px',
                 overflow: 'hidden'
             }}
         >
@@ -111,8 +115,12 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
                     <Container
                         sx={{
                             flexDirection: 'row',
+                            padding: '20px',
                             width: '100%',
-                            justifyContent: 'space-between'
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            backgroundColor: light ? colors.light.card : colors.dark.card,
+                            borderRadius: '4px'
                         }}
                     >
                         <Autocomplete
@@ -127,12 +135,14 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
                                 'Name Z-A'
                             ]}
                             sx={{ width: '120px' }}
+                            hideHelper
                         />
                         <Autocomplete
                             value={props.size}
                             onChange={handleSize}
                             list={['25', '50', '100']}
                             sx={{ width: '30px' }}
+                            hideHelper
                         />
                     </Container>
                     <Container
@@ -141,10 +151,11 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
                             flex: 1,
                             flexWrap: 'wrap',
                             width: '100%',
-                            gap: '20px',
+                            gap: '30px',
                             justifyContent: 'flex-start',
                             alignItems: 'flex-start',
-                            overflow: 'auto'
+                            overflow: 'auto',
+                            padding: '10px'
                         }}
                     >
                         {props.dogs.map((dog, index) => (
@@ -156,12 +167,15 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
                             flexDirection: 'row',
                             width: '100%',
                             justifyContent: 'space-between',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            padding: '5px',
+                            backgroundColor: light ? colors.light.card : colors.dark.card,
+                            borderRadius: '4px'
                         }}
                     >
-                        <Typography variant="small">{`Showing ${props.from} to ${
+                        <Typography variant="small" sx={{ marginLeft: '5px' }}>{`${props.from} - ${
                             parseInt(props.from) + parseInt(props.size)
-                        } from ${props.total}`}</Typography>
+                        } of ${props.total} results`}</Typography>
                         <Container sx={{ flexDirection: 'row', gap: '10px' }}>
                             {parseInt(props.from) <= 0 ? (
                                 <></>

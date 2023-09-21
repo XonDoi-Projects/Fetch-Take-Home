@@ -38,8 +38,8 @@ export const StyledContainer = styled.div<StyledContainerProps>(
                     ? colors.light.background
                     : colors.dark.background
                 : light
-                ? colors.light.foreground
-                : colors.dark.foreground
+                ? colors.light.accent
+                : colors.dark.accent
         },
         '::-webkit-scrollbar-track': {}
     })

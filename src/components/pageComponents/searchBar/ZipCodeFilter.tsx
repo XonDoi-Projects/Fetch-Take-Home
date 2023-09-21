@@ -49,7 +49,9 @@ export const ZipCodeFilter: FunctionComponent<ZipCodeFilterProps> = (props) => {
     }, [props.zipCodes])
 
     return (
-        <Container sx={{ flexDirection: 'column', height: 'fit-content', overflow: 'hidden' }}>
+        <Container
+            sx={{ flexDirection: 'column', height: 'fit-content', overflow: 'hidden', gap: '10px' }}
+        >
             <TextField
                 value={zipCode}
                 onChange={(e) => {
@@ -57,7 +59,7 @@ export const ZipCodeFilter: FunctionComponent<ZipCodeFilterProps> = (props) => {
                         setZipCode(e)
                     }
                 }}
-                label="Zipcodes"
+                label="Zip Code"
                 fieldContainerSx={{ paddingRight: '10px' }}
                 suffix={
                     <Button
@@ -73,6 +75,7 @@ export const ZipCodeFilter: FunctionComponent<ZipCodeFilterProps> = (props) => {
                         <BiPlus style={{ fontSize: '15px' }} />
                     </Button>
                 }
+                hideHelper
             />
             {props.zipCodes.length ? (
                 <Container
@@ -90,8 +93,8 @@ export const ZipCodeFilter: FunctionComponent<ZipCodeFilterProps> = (props) => {
                             <Container
                                 sx={{
                                     backgroundColor: light
-                                        ? colors.light.secondary
-                                        : colors.dark.secondary,
+                                        ? colors.light.accent
+                                        : colors.dark.accent,
                                     height: '25px',
                                     width: 'fit-content',
                                     padding: '5px 10px',
@@ -118,10 +121,11 @@ export const ZipCodeFilter: FunctionComponent<ZipCodeFilterProps> = (props) => {
                                         height: '20px',
                                         borderRadius: '50%',
                                         padding: '0px',
-                                        backgroundColor: 'transparent'
+                                        backgroundColor: light
+                                            ? colors.light.card
+                                            : colors.dark.card
                                     }}
                                     onClick={() => handleRemoveZipCode(zipCode)}
-                                    swapHover
                                 >
                                     <BiX style={{ fontSize: '20px' }} />
                                 </Button>
@@ -130,9 +134,7 @@ export const ZipCodeFilter: FunctionComponent<ZipCodeFilterProps> = (props) => {
                                 <Typography
                                     sx={{
                                         margin: '0px',
-                                        color: light
-                                            ? colors.light.secondary
-                                            : colors.dark.secondary
+                                        color: light ? colors.light.accent : colors.dark.accent
                                     }}
                                 >
                                     •

@@ -19,10 +19,8 @@ export const Card: FunctionComponent<StyledCardProps> = (props) => {
     return (
         <StyledCard
             sx={{
-                backgroundColor: light ? colors.light.background : colors.dark.background,
-                boxShadow: `0 0px 10px  ${
-                    light ? colors.light.background : colors.dark.background
-                }`,
+                backgroundColor: light ? colors.light.card : colors.dark.card,
+                boxShadow: `0 0px 15px  ${light ? colors.light.shadow : colors.dark.shadow}`,
                 ...props.sx
             }}
         >

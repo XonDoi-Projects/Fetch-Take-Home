@@ -112,10 +112,10 @@ export const Typography: FunctionComponent<TypographyProps> = (props) => {
                         : '"Roboto", sans-serif',
                 color:
                     props.variant === 'supertitle' || props.variant === 'title'
-                        ? themeColors.primary
+                        ? themeColors.accent
                         : props.variant === 'subtitle' || props.variant === 'linker'
-                        ? themeColors.secondary
-                        : themeColors.foreground,
+                        ? themeColors.accent
+                        : themeColors.text,
                 ...variantSx,
                 ...props.sx
             }}

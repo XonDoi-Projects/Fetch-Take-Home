@@ -47,7 +47,7 @@ export const Accordian: FunctionComponent<AccordianProps> = (props) => {
                 <Typography
                     sx={{
                         margin: '0px',
-                        color: light ? colors.light.accentForeground : colors.dark.accentForeground
+                        color: light ? colors.light.textOnAccent : colors.dark.textOnAccent
                     }}
                 >
                     {props.title}
@@ -68,9 +68,7 @@ export const Accordian: FunctionComponent<AccordianProps> = (props) => {
                     <BiChevronRight
                         style={{
                             fontSize: '32px',
-                            color: light
-                                ? colors.light.accentForeground
-                                : colors.dark.accentForeground
+                            color: light ? colors.light.textOnAccent : colors.dark.textOnAccent
                         }}
                     />
                 </Button>

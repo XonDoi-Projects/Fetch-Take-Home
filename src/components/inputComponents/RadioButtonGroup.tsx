@@ -57,12 +57,12 @@ export const RadioButtonGroup: FunctionComponent<RadioButtonGroupProps> = (props
                     >
                         {props.value !== button ? (
                             <BiRadioCircle
-                                color={light ? colors.light.foreground : colors.dark.foreground}
+                                color={light ? colors.light.accent : colors.dark.accent}
                                 style={{ fontSize: '20px' }}
                             />
                         ) : (
                             <BiRadioCircleMarked
-                                color={light ? colors.light.foreground : colors.dark.foreground}
+                                color={light ? colors.light.accent : colors.dark.accent}
                                 style={{ fontSize: '20px' }}
                             />
                         )}
@@ -72,7 +72,7 @@ export const RadioButtonGroup: FunctionComponent<RadioButtonGroupProps> = (props
                         sx={{
                             fontWeight: 500,
                             marginRight: '20px',
-                            color: light ? colors.light.foreground : colors.dark.foreground
+                            color: light ? colors.light.text : colors.dark.text
                         }}
                     >
                         {button}

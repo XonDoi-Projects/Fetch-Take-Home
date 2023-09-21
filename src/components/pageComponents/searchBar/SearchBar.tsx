@@ -178,8 +178,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                     gap: '20px',
                     maxWidth: '400px',
                     borderRadius: '4px',
-                    border: '1px solid',
-                    borderColor: light ? colors.light.accent : colors.dark.accent
+                    backgroundColor: light ? colors.light.card : colors.dark.card
                 }}
             >
                 <Container
@@ -199,6 +198,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                         }}
                         label="Min Age (Years)"
                         sx={{ width: '150px' }}
+                        hideHelper
                     />
                     <TextField
                         value={props.ageMax?.toString() || ''}
@@ -209,6 +209,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                         }}
                         label="Max Age (Years)"
                         sx={{ width: '150px' }}
+                        hideHelper
                     />
                 </Container>
                 <ZipCodeFilter zipCodes={props.zipCodes} setZipCodes={props.setZipCodes} />
@@ -218,9 +219,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                         onClick={() => setDirty(true)}
                         sx={{
                             borderRadius: '19px',
-                            color: light
-                                ? colors.light.accentForeground
-                                : colors.dark.accentForeground,
+                            color: light ? colors.light.textOnAccent : colors.dark.textOnAccent,
                             backgroundColor: light ? colors.light.accent : colors.dark.accent,
                             width: '100px'
                         }}
@@ -232,9 +231,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                         onClick={handleClear}
                         sx={{
                             borderRadius: '19px',
-                            color: light
-                                ? colors.light.accentForeground
-                                : colors.dark.accentForeground,
+                            color: light ? colors.light.textOnAccent : colors.dark.textOnAccent,
                             backgroundColor: light ? colors.light.accent : colors.dark.accent,
                             width: '100px'
                         }}

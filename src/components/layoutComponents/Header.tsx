@@ -8,6 +8,7 @@ import { Button } from '../inputComponents'
 import { Typography } from './Typography'
 import { useClickOutside } from '../hooks'
 import { Popup } from './Popup'
+import { Cover } from './Cover'
 
 export interface HeaderProps {
     sx?: CSSProperties
@@ -117,28 +118,7 @@ export const Header: FunctionComponent<HeaderProps> = (props) => {
                             >
                                 <BiMenu style={{ fontSize: '30px' }} />
                             </Button>
-                            {/* <Container
-                                ref={popupRef}
-                                sx={{
-                                    position: 'absolute',
-                                    top: navDOMRect?.height,
-                                    left: 0,
-                                    width: size?.width,
-                                    height: show ? nav.length * 57 + 'px' : '0px',
-                                    overflow: 'hidden',
-                                    zIndex: 9999,
-                                    transition: 'height 0.4s',
-                                    transitionTimingFunction: 'cubic-bezier(0, 0, 0, 1)'
-                                }}
-                            >
-                                <Card
-                                    sx={{
-                                        flexDirection: 'column',
-                                        width: '100%',
-                                        height: '100%',
-                                        borderRadius: '0px'
-                                    }}
-                                > */}
+                            <Cover show={show} />
                             <Popup
                                 popupRef={popupRef}
                                 show={show}
@@ -162,9 +142,6 @@ export const Header: FunctionComponent<HeaderProps> = (props) => {
                                     </Link>
                                 ))}
                             </Popup>
-
-                            {/* </Card>
-                            </Container> */}
                         </>
                     )}
                 </Container>

@@ -60,9 +60,19 @@ export const Checkbox: FunctionComponent<CheckboxProps> = ({ onChange, ...props 
 
     const renderIcon = () => {
         return props.value === 'indetermined' ? (
-            <BsDash style={{ color: light ? colors.light.background : colors.dark.background }} />
+            <BsDash
+                style={{
+                    color: light ? colors.light.background : colors.dark.background,
+                    margin: '-1px 0px 0px -1px'
+                }}
+            />
         ) : props.value === 'yes' ? (
-            <BsCheck style={{ color: light ? colors.light.background : colors.dark.background }} />
+            <BsCheck
+                style={{
+                    color: light ? colors.light.background : colors.dark.background,
+                    margin: '-1px 0px 0px -1px'
+                }}
+            />
         ) : (
             <></>
         )
@@ -91,8 +101,8 @@ export const Checkbox: FunctionComponent<CheckboxProps> = ({ onChange, ...props 
                 readOnly={props.readOnly}
                 value={props.value}
                 sx={{
-                    backgroundColor: light ? colors.light.primary : colors.dark.primary,
-                    borderColor: light ? colors.light.primary : colors.dark.primary
+                    backgroundColor: light ? colors.light.accent : colors.dark.accent,
+                    borderColor: light ? colors.light.accent : colors.dark.accent
                 }}
             >
                 {renderIcon()}
@@ -123,7 +133,7 @@ export const Checkbox: FunctionComponent<CheckboxProps> = ({ onChange, ...props 
                     <Typography
                         sx={{
                             textTransform: 'uppercase',
-                            color: light ? colors.light.primary : colors.dark.primary,
+                            color: light ? colors.dark.background : colors.light.background,
                             ...props.typographySx
                         }}
                         variant="small"

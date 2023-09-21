@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react'
+import { FunctionComponent, useState } from 'react'
 import { Dog } from '../../../api'
 import { Container } from '../../layoutComponents'
 import { useDarkTheme, useSize } from '../../../providers'
@@ -13,17 +13,24 @@ export const DogCard: FunctionComponent<DogCardProps> = (props) => {
     const { light } = useDarkTheme()
     const mobile = useSize()
 
+    const [hover, setHover] = useState(false)
+
     return (
         <Container
             sx={{
                 flex: mobile.mobile ? 1 : undefined,
                 flexDirection: 'column',
                 width: '200px',
-                height: '300px',
-                borderRadius: '4px',
-                border: '1px solid',
-                borderColor: light ? colors.dark.background : colors.light.background
+                height: '330px',
+                borderRadius: '10px',
+                backgroundColor: light ? colors.light.card : colors.dark.card,
+                boxShadow: `0 0px ${hover ? '15px' : '10px'} ${
+                    light ? colors.light.shadow : colors.dark.shadow
+                }`,
+                overflow: 'visible'
             }}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
         >
             <Container
                 sx={{
@@ -47,7 +54,7 @@ export const DogCard: FunctionComponent<DogCardProps> = (props) => {
             <Container
                 sx={{
                     flexDirection: 'column',
-                    height: '90px',
+                    height: '120px',
                     width: '100%',
                     gap: '5px',
                     padding: '5px',
@@ -56,30 +63,26 @@ export const DogCard: FunctionComponent<DogCardProps> = (props) => {
             >
                 <Typography
                     variant="body"
-                    // sx={{ color: light ? colors.dark.foreground : colors.light.foreground }}
+                    sx={{
+                        textAlign: 'center',
+                        textTransform: 'uppercase',
+                        fontWeight: 'bolder',
+                        color: light ? colors.light.textOnAccent : colors.dark.textOnAccent,
+                        backgroundColor: light ? colors.light.accent : colors.dark.accent,
+                        // borderRadius: '8px',
+                        padding: '5px 0px',
+                        fontSize: '19px'
+                    }}
                 >
-                    Name: {props.dog.name}
+                    {props.dog.name}
                 </Typography>
-                <Typography
-                    variant="small"
-                    // sx={{ color: light ? colors.dark.foreground : colors.light.foreground }}
-                >
-                    Breed: {props.dog.breed}
+                <Typography sx={{ textAlign: 'center', wordBreak: 'break-word' }}>
+                    {props.dog.breed} · {props.dog.age} YRS
                 </Typography>
-                <Container sx={{ flexDirection: 'row', gap: '20px' }}>
-                    <Typography
-                        variant="small"
-                        // sx={{ color: light ? colors.dark.foreground : colors.light.foreground }}
-                    >
-                        Age: {props.dog.age}
-                    </Typography>
-                    <Typography
-                        variant="small"
-                        // sx={{ color: light ? colors.dark.foreground : colors.light.foreground }}
-                    >
-                        Zip Code: {props.dog.zip_code}
-                    </Typography>
-                </Container>
+
+                <Typography variant="small" sx={{ textAlign: 'center', wordBreak: 'break-word' }}>
+                    Zip Code: {props.dog.zip_code}
+                </Typography>
             </Container>
         </Container>
     )

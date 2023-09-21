@@ -72,7 +72,7 @@ export const Home = () => {
                     />
                 )}
                 <Container sx={{ flexDirection: 'column', flex: 1, padding: '10px' }}>
-                    <Typography variant="title">{`Welcome ${user?.name},`}</Typography>
+                    <Typography variant="title">{`Hi ${user?.name},`}</Typography>
                     <Typography sx={{ marginBottom: '20px' }}>
                         Let's find you the perfect dog!
                     </Typography>

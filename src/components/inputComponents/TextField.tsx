@@ -9,14 +9,13 @@ import {
     useState
 } from 'react'
 import styled from '@emotion/styled'
-import { FieldContainer } from '../layoutComponents'
+import { FieldContainer, FieldContainerProps } from '../layoutComponents'
 import { useDarkTheme } from '../../providers'
 import { colors } from '../Colors'
 
-export interface TextFieldProps extends StyledInputProps {
-    label?: string
-    errorText?: string
-    helperText?: string
+export interface TextFieldProps
+    extends StyledInputProps,
+        Omit<FieldContainerProps, 'sx' | 'children' | 'isFocus'> {
     fieldContainerSx?: CSSProperties
     value: string
     onChange: (value: string) => void
@@ -25,6 +24,7 @@ export interface TextFieldProps extends StyledInputProps {
     suffix?: ReactNode
     type?: 'text' | 'password'
     ref?: Ref<HTMLInputElement>
+    hideHelper?: boolean
 }
 
 interface StyledInputProps {

@@ -1,21 +1,21 @@
 export const colors = {
     light: {
-        background: '#f2f2f4',
-        foreground: '#02171c',
-        accent: '#02171c',
-        accentForeground: '#f2f2f4',
-        primary: '#053f4c',
-        secondary: '#1d5562',
+        background: '#f6eada',
+        card: '#fef7eb',
+        shadow: '#7f7f7f',
+        accent: '#0f5c78',
+        text: '#1f1f1f',
+        textOnAccent: '#ffffff',
         success: '#0c5a00',
         error: '#a20200'
     },
     dark: {
-        background: '#02171c',
-        foreground: '#cd9725',
-        accent: '#cd9725',
-        accentForeground: '#02171c',
-        primary: '#f2f2f2',
-        secondary: '#fef4dd',
+        background: '#141323',
+        card: '#1f1f32',
+        shadow: '#7f7f7f',
+        accent: '#dfbe22',
+        text: '#ffffff',
+        textOnAccent: '#1f1f1f',
         success: '#95ff84',
         error: '#d59392'
     }

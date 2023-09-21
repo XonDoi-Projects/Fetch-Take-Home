@@ -43,9 +43,7 @@ export const Spinner: FunctionComponent<SpinnerProps> = (props) => {
                     animation: `${rotation} 1.2s cubic-bezier(0.5,0,0.5,1) infinite`,
                     animationDelay: '-0.45s',
                     borderColor: 'transparent',
-                    borderTopColor: props.swapColor
-                        ? themeColors.foreground
-                        : themeColors.background,
+                    borderTopColor: props.swapColor ? themeColors.text : themeColors.background,
                     ...props.spinnerSx
                 }}
             />
@@ -60,9 +58,7 @@ export const Spinner: FunctionComponent<SpinnerProps> = (props) => {
                     animation: `${rotation} 1.2s cubic-bezier(0.5,0,0.5,1) infinite`,
                     animationDelay: '-0.3s',
                     borderColor: 'transparent',
-                    borderTopColor: props.swapColor
-                        ? themeColors.foreground
-                        : themeColors.background,
+                    borderTopColor: props.swapColor ? themeColors.text : themeColors.background,
                     ...props.spinnerSx
                 }}
             />
@@ -77,9 +73,7 @@ export const Spinner: FunctionComponent<SpinnerProps> = (props) => {
                     animation: `${rotation} 1.2s cubic-bezier(0.5,0,0.5,1) infinite`,
                     animationDelay: '-0.15s',
                     borderColor: 'transparent',
-                    borderTopColor: props.swapColor
-                        ? themeColors.foreground
-                        : themeColors.background,
+                    borderTopColor: props.swapColor ? themeColors.text : themeColors.background,
                     ...props.spinnerSx
                 }}
             />
@@ -93,9 +87,7 @@ export const Spinner: FunctionComponent<SpinnerProps> = (props) => {
                     height: '30px',
                     animation: `${rotation} 1.2s cubic-bezier(0.5,0,0.5,1) infinite`,
                     borderColor: 'transparent',
-                    borderTopColor: props.swapColor
-                        ? themeColors.foreground
-                        : themeColors.background,
+                    borderTopColor: props.swapColor ? themeColors.text : themeColors.background,
                     ...props.spinnerSx
                 }}
             />

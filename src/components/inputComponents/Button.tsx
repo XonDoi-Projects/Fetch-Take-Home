@@ -26,7 +26,7 @@ export const StyledButton = styled.button<StyledButtonProps>(
         cursor: disabled ? 'auto' : 'pointer',
         borderRadius: '5px',
         border: 'none',
-        color: light ? colors.light.foreground : colors.dark.foreground,
+        color: light ? colors.light.accent : colors.dark.accent,
         justifyContent: 'center',
         alignItems: 'center',
         ...sx,

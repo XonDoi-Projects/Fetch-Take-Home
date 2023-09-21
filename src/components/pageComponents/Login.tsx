@@ -72,11 +72,14 @@ export const Login = () => {
                     flexDirection: 'column',
                     flex: 1,
                     gap: '10px',
+                    padding: '20px',
                     justifyContent: 'space-between',
                     alignItems: 'flex-end'
                 }}
             >
-                <Typography variant="subtitle">Welcome to a Fetch Exercise!</Typography>
+                <Typography variant="subtitle" sx={{ width: '100%', textAlign: 'left' }}>
+                    Login!
+                </Typography>
                 <Container sx={{ flexDirection: 'column', width: '100%' }}>
                     <TextField
                         value={name}
@@ -106,7 +109,7 @@ export const Login = () => {
                     loading={loading}
                     sx={{
                         borderRadius: '19px',
-                        color: light ? colors.light.accentForeground : colors.dark.accentForeground,
+                        color: light ? colors.light.textOnAccent : colors.dark.textOnAccent,
                         backgroundColor: light ? colors.light.accent : colors.dark.accent,
                         width: mobile.mobile ? '100%' : '100px'
                     }}
