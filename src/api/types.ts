@@ -25,3 +25,7 @@ export interface SearchQueryParams {
     ageMin: string
     ageMax: string
 }
+
+export interface Match {
+    match: string
+}

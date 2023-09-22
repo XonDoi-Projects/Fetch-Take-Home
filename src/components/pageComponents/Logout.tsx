@@ -18,23 +18,22 @@ export const Logout = () => {
 
     const timeoutRef = useRef<NodeJS.Timeout>()
 
-    const logout = useCallback(async () => {
+    const logout = useCallback(() => {
         setLoading(true)
         try {
-            const result = await fetch(`${FETCH_BASE_URL}/auth/logout`, {
+            fetch(`${FETCH_BASE_URL}/auth/logout`, {
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 method: 'POST',
                 credentials: 'include'
+            }).then((res) => {
+                if (res.status === 200) {
+                    setUser(undefined)
+                    navigate('/login')
+                }
             })
-
-            if (result.status === 200) {
-                setUser(undefined)
-                navigate('/login')
-            }
         } catch (e: any) {
-            console.log(e)
             setSnackbar({
                 message: e.message,
                 color: colors.light.error

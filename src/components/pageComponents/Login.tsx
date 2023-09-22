@@ -37,30 +37,32 @@ export const Login = () => {
         }
     }, [showSnackbar])
 
-    const handleLogin = async () => {
+    const handleLogin = () => {
         setLoading(true)
         try {
-            const result = await fetch(`${FETCH_BASE_URL}/auth/login`, {
+            fetch(`${FETCH_BASE_URL}/auth/login`, {
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 method: 'POST',
                 body: JSON.stringify({ name, email }),
                 credentials: 'include'
+            }).then((res) => {
+                if (res.status === 200) {
+                    setSnackbar({ message: 'Login Successful!', color: colors.light.success })
+                    setUser({ name, email })
+                    navigate('/')
+                } else {
+                    setSnackbar({
+                        message: `${res.status} - Something went wrong!`,
+                        color: colors.light.error
+                    })
+                }
             })
-
-            if (result.status === 200) {
-                setSnackbar({ message: 'Login Successful!', color: colors.light.success })
-                setUser({ name, email })
-                navigate('/')
-            } else {
-                setSnackbar({
-                    message: `${result.status} - Something went wrong!`,
-                    color: colors.light.error
-                })
-            }
+            setShowSnackbar(true)
         } catch (e: any) {
             setSnackbar({ message: e.message, color: colors.light.error })
+            setShowSnackbar(true)
         }
         setLoading(false)
     }
@@ -91,6 +93,7 @@ export const Login = () => {
                             }
                         }}
                         errorText={errorName}
+                        onKeyPress={handleLogin}
                     />
                     <TextField
                         value={email}
@@ -102,6 +105,7 @@ export const Login = () => {
                             }
                         }}
                         errorText={errorEmail}
+                        onKeyPress={handleLogin}
                     />
                 </Container>
                 <Button

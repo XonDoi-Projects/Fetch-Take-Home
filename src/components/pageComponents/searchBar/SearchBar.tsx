@@ -1,14 +1,14 @@
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Dog, SearchQueryParams } from '../../../api'
 import { Container, FadeInOut, FixedDiv } from '../../layoutComponents'
-import { Button, TextField } from '../../inputComponents'
+import { Autocomplete, Button, TextField } from '../../inputComponents'
 import { colors } from '../../Colors'
 import { Typography } from '../../layoutComponents/Typography'
-import { useDarkTheme } from '../../../providers'
+import { useDarkTheme, useSize } from '../../../providers'
 import { FETCH_BASE_URL } from '../../env'
 import { BreedFilter } from './BreedFilter'
 import { ZipCodeFilter } from './ZipCodeFilter'
-import { Sort } from '../grid/DogGrid'
+import { Sort } from '../dogs/DogGrid'
 
 export interface SearchBarProps {
     from: string
@@ -35,6 +35,10 @@ export interface SearchBarProps {
     setTotal: (value: string) => void
 
     sort: Sort
+
+    handleSize?: (value: string) => void
+    handleSort?: (value: string) => void
+    getSortValue?: () => string
 }
 
 export const SearchBar: FunctionComponent<SearchBarProps> = ({
@@ -46,6 +50,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
     ...props
 }) => {
     const { light } = useDarkTheme()
+    const mobile = useSize()
 
     const [snackbar, setSnackbar] = useState<{ message: string; color: string }>()
     const [showSnackbar, setShowSnackbar] = useState(false)
@@ -126,11 +131,20 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                         method: 'GET',
                         credentials: 'include'
                     }
-                ).then((res) => res.json())
+                ).then((res) => {
+                    if (res.status === 200) {
+                        return res.json()
+                    } else {
+                        setSnackbar({
+                            message: `${res.status} - Something went wrong!`,
+                            color: colors.light.error
+                        })
+                        setShowSnackbar(true)
+                    }
+                })
 
                 const dogIds = result.resultIds
 
-                // if (dogIds.length) {
                 const dogs: Dog[] = await fetch(`${FETCH_BASE_URL}/dogs`, {
                     headers: {
                         'Content-Type': 'application/json'
@@ -138,11 +152,20 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                     body: JSON.stringify(dogIds),
                     method: 'POST',
                     credentials: 'include'
-                }).then((res) => res.json())
+                }).then((res) => {
+                    if (res.status === 200) {
+                        return res.json()
+                    } else {
+                        setSnackbar({
+                            message: `${res.status} - Something went wrong!`,
+                            color: colors.light.error
+                        })
+                        setShowSnackbar(true)
+                    }
+                })
 
                 setDogs(dogs)
                 setTotal(result.total)
-                // }
                 setDirty(false)
             } catch (e) {
                 console.log(e)
@@ -174,46 +197,105 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                     flex: 1,
                     padding: '20px',
                     flexDirection: 'column',
-                    flexWrap: 'wrap',
-                    gap: '20px',
                     maxWidth: '400px',
-                    borderRadius: '4px',
-                    backgroundColor: light ? colors.light.card : colors.dark.card
+                    borderRadius: mobile.mobile ? undefined : '4px',
+                    backgroundColor: light ? colors.light.card : colors.dark.card,
+                    overflow: 'hidden'
                 }}
             >
                 <Container
                     sx={{
-                        flexDirection: 'row',
-                        gap: '10px',
-                        flexWrap: 'wrap',
-                        alignItems: 'center'
+                        flexDirection: 'column',
+                        flex: 1,
+                        gap: '20px',
+                        borderRadius: mobile.mobile ? undefined : '4px',
+                        backgroundColor: light ? colors.light.card : colors.dark.card,
+                        overflow: mobile.mobile ? 'auto' : 'hidden',
+                        paddingBottom: '20px'
                     }}
                 >
-                    <TextField
-                        value={props.ageMin?.toString() || ''}
-                        onChange={(e) => {
-                            if (/^[0-9]*$/i.test(e)) {
-                                props.setAgeMin(e ? parseInt(e) : undefined)
-                            }
+                    {mobile.mobile && props.getSortValue ? (
+                        <Container
+                            sx={{
+                                flexDirection: 'row',
+                                width: '100%',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                backgroundColor: light ? colors.light.card : colors.dark.card
+                            }}
+                        >
+                            <Autocomplete
+                                value={props.getSortValue() as string}
+                                onChange={(value) => props.handleSort && props.handleSort(value)}
+                                list={[
+                                    'Breed A-Z',
+                                    'Breed Z-A',
+                                    'Age Ascending',
+                                    'Age Descending',
+                                    'Name A-Z',
+                                    'Name Z-A'
+                                ]}
+                                sx={{ flex: 1 }}
+                                label="Sort"
+                                hideHelper
+                            />
+                            <Autocomplete
+                                value={props.size}
+                                onChange={(value) => props.handleSize && props.handleSize(value)}
+                                list={['25', '50', '100']}
+                                sx={{ width: '30px' }}
+                                label="Size"
+                                hideHelper
+                            />
+                        </Container>
+                    ) : (
+                        <></>
+                    )}
+                    <Container
+                        sx={{
+                            flexDirection: 'row',
+                            gap: '10px',
+                            flexWrap: 'wrap',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
                         }}
-                        label="Min Age (Years)"
-                        sx={{ width: '150px' }}
-                        hideHelper
-                    />
-                    <TextField
-                        value={props.ageMax?.toString() || ''}
-                        onChange={(e) => {
-                            if (/^[0-9]*$/i.test(e)) {
-                                props.setAgeMax(e ? parseInt(e) : undefined)
-                            }
+                    >
+                        <TextField
+                            value={props.ageMin?.toString() || ''}
+                            onChange={(e) => {
+                                if (/^[0-9]*$/i.test(e)) {
+                                    props.setAgeMin(e ? parseInt(e) : undefined)
+                                }
+                            }}
+                            label="Min Age (Years)"
+                            sx={{ width: '140px' }}
+                            hideHelper
+                        />
+                        <TextField
+                            value={props.ageMax?.toString() || ''}
+                            onChange={(e) => {
+                                if (/^[0-9]*$/i.test(e)) {
+                                    props.setAgeMax(e ? parseInt(e) : undefined)
+                                }
+                            }}
+                            label="Max Age (Years)"
+                            sx={{ width: '140px' }}
+                            hideHelper
+                        />
+                    </Container>
+                    <ZipCodeFilter zipCodes={props.zipCodes} setZipCodes={props.setZipCodes} />
+                    <Typography
+                        variant="field"
+                        sx={{
+                            color: light ? colors.dark.background : colors.light.background,
+                            marginBottom: '0px'
                         }}
-                        label="Max Age (Years)"
-                        sx={{ width: '150px' }}
-                        hideHelper
-                    />
+                    >
+                        Breed
+                    </Typography>
+                    <BreedFilter breeds={props.breeds} setBreeds={props.setBreeds} />
                 </Container>
-                <ZipCodeFilter zipCodes={props.zipCodes} setZipCodes={props.setZipCodes} />
-                <BreedFilter breeds={props.breeds} setBreeds={props.setBreeds} />
+
                 <Container sx={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Button
                         onClick={() => setDirty(true)}

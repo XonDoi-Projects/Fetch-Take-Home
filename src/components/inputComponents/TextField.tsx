@@ -20,6 +20,7 @@ export interface TextFieldProps
     value: string
     onChange: (value: string) => void
     onFocus?: () => void
+    onKeyPress?: () => void
     onBlur?: (value: string) => void
     suffix?: ReactNode
     type?: 'text' | 'password'
@@ -51,7 +52,10 @@ const StyledInput = styled.input<StyledInputProps>(
 )
 
 export const TextField: FunctionComponent<TextFieldProps> = forwardRef(
-    ({ value, onChange, sx, fieldContainerSx, ...props }, ref: ForwardedRef<HTMLInputElement>) => {
+    (
+        { value, onChange, onFocus, onBlur, onKeyPress, sx, fieldContainerSx, ...props },
+        ref: ForwardedRef<HTMLInputElement>
+    ) => {
         const { light } = useDarkTheme()
         const [isFocus, setIsFocus] = useState(false)
 
@@ -69,11 +73,16 @@ export const TextField: FunctionComponent<TextFieldProps> = forwardRef(
                     sx={{ color: light ? colors.dark.background : colors.light.background, ...sx }}
                     onFocus={() => {
                         setIsFocus(true)
-                        props.onFocus && props.onFocus()
+                        onFocus && onFocus()
                     }}
                     onBlur={(e) => {
                         setIsFocus(false)
-                        props.onBlur && props.onBlur(e.target.value)
+                        onBlur && onBlur(e.target.value)
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.code === 'Enter') {
+                            onKeyPress && onKeyPress()
+                        }
                     }}
                 />
                 {props.suffix ? props.suffix : <></>}

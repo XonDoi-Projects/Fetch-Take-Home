@@ -4,10 +4,9 @@ import { Container, Spinner } from '../../layoutComponents'
 import { DogCard } from './DogCard'
 import { Typography } from '../../layoutComponents/Typography'
 import { Autocomplete, Button } from '../../inputComponents'
-import { isEqual } from 'lodash'
 import { BiChevronLeft, BiChevronRight } from 'react-icons/bi'
 import { colors } from '../../Colors'
-import { useDarkTheme } from '../../../providers'
+import { useDarkTheme, useSize } from '../../../providers'
 
 export interface Sort {
     [field: string]: 'asc' | 'desc'
@@ -26,15 +25,18 @@ export interface DogGridProps {
     loading: boolean
 
     setDirty: (value: boolean) => void
+
+    handleSize?: (value: string) => void
+    handleSort?: (value: string) => void
+    getSortValue?: () => string
+
+    favorites: string[]
+    setFavorites: (value: string[]) => void
 }
 
 export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
     const { light } = useDarkTheme()
-
-    const handleSize = (value: string) => {
-        props.setSize(value)
-        props.setDirty(true)
-    }
+    const mobile = useSize()
 
     const handleNext = () => {
         const newFrom = parseInt(props.from) + parseInt(props.size)
@@ -48,45 +50,12 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
         props.setDirty(true)
     }
 
-    const handleSort = (value: string) => {
-        if (value === 'Breed A-Z') {
-            props.setSort({ breed: 'asc' })
-        } else if (value === 'Breed Z-A') {
-            props.setSort({ breed: 'desc' })
-        } else if (value === 'Name A-Z') {
-            props.setSort({ name: 'asc' })
-        } else if (value === 'Name Z-A') {
-            props.setSort({ name: 'desc' })
-        } else if (value === 'Age Ascending') {
-            props.setSort({ age: 'asc' })
-        } else {
-            props.setSort({ age: 'desc' })
-        }
-
-        props.setDirty(true)
-    }
-
-    const getValue = () => {
-        if (isEqual(props.sort, { breed: 'asc' })) {
-            return 'Breed A-Z'
-        } else if (isEqual(props.sort, { breed: 'desc' })) {
-            return 'Breed Z-A'
-        } else if (isEqual(props.sort, { name: 'asc' })) {
-            return 'Name A-Z'
-        } else if (isEqual(props.sort, { name: 'desc' })) {
-            return 'Name Z-A'
-        } else if (isEqual(props.sort, { age: 'asc' })) {
-            return 'Age Ascending'
-        } else {
-            return 'Age Descending'
-        }
-    }
     return (
         <Container
             sx={{
                 flexDirection: 'row',
                 flex: 1,
-                maxWidth: '1150px',
+                maxWidth: '1170px',
                 overflow: 'hidden'
             }}
         >
@@ -112,54 +81,63 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
                         alignItems: 'flex-end'
                     }}
                 >
-                    <Container
-                        sx={{
-                            flexDirection: 'row',
-                            padding: '20px',
-                            width: '100%',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            backgroundColor: light ? colors.light.card : colors.dark.card,
-                            borderRadius: '4px'
-                        }}
-                    >
-                        <Autocomplete
-                            value={getValue() as string}
-                            onChange={handleSort}
-                            list={[
-                                'Breed A-Z',
-                                'Breed Z-A',
-                                'Age Ascending',
-                                'Age Descending',
-                                'Name A-Z',
-                                'Name Z-A'
-                            ]}
-                            sx={{ width: '120px' }}
-                            hideHelper
-                        />
-                        <Autocomplete
-                            value={props.size}
-                            onChange={handleSize}
-                            list={['25', '50', '100']}
-                            sx={{ width: '30px' }}
-                            hideHelper
-                        />
-                    </Container>
+                    {!mobile.mobile && props.getSortValue ? (
+                        <Container
+                            sx={{
+                                flexDirection: 'row',
+                                padding: '20px',
+                                width: '100%',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                backgroundColor: light ? colors.light.card : colors.dark.card,
+                                borderRadius: '4px'
+                            }}
+                        >
+                            <Autocomplete
+                                value={props.getSortValue() as string}
+                                onChange={(value) => props.handleSort && props.handleSort(value)}
+                                list={[
+                                    'Breed A-Z',
+                                    'Breed Z-A',
+                                    'Age Ascending',
+                                    'Age Descending',
+                                    'Name A-Z',
+                                    'Name Z-A'
+                                ]}
+                                sx={{ width: '120px' }}
+                                hideHelper
+                            />
+                            <Autocomplete
+                                value={props.size}
+                                onChange={(value) => props.handleSize && props.handleSize(value)}
+                                list={['25', '50', '100']}
+                                sx={{ width: '30px' }}
+                                hideHelper
+                            />
+                        </Container>
+                    ) : (
+                        <></>
+                    )}
                     <Container
                         sx={{
                             flexDirection: 'row',
                             flex: 1,
                             flexWrap: 'wrap',
                             width: '100%',
-                            gap: '30px',
+                            gap: '25px',
                             justifyContent: 'flex-start',
                             alignItems: 'flex-start',
                             overflow: 'auto',
-                            padding: '10px'
+                            padding: '15px'
                         }}
                     >
                         {props.dogs.map((dog, index) => (
-                            <DogCard key={dog.breed + index} dog={dog} />
+                            <DogCard
+                                key={dog.breed + index}
+                                dog={dog}
+                                favorites={props.favorites}
+                                setFavorites={props.setFavorites}
+                            />
                         ))}
                     </Container>
                     <Container

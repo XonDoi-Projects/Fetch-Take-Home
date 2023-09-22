@@ -5,7 +5,7 @@ import { FETCH_BASE_URL } from '../../env'
 import { colors } from '../../Colors'
 import { Typography } from '../../layoutComponents/Typography'
 import { cloneDeep } from 'lodash'
-import { useDarkTheme } from '../../../providers'
+import { useSize } from '../../../providers'
 
 export interface BreedFilterProps {
     breeds: string[]
@@ -13,7 +13,7 @@ export interface BreedFilterProps {
 }
 
 export const BreedFilter: FunctionComponent<BreedFilterProps> = (props) => {
-    const { light } = useDarkTheme()
+    const mobile = useSize()
     const [allBreeds, setAllBreeds] = useState<string[]>([])
 
     const [loading, setLoading] = useState(false)
@@ -35,20 +35,29 @@ export const BreedFilter: FunctionComponent<BreedFilterProps> = (props) => {
         }
     }, [showSnackbar])
 
-    const pullBreeds = useCallback(async () => {
+    const pullBreeds = useCallback(() => {
         setLoading(true)
         try {
-            const result = await fetch(`${FETCH_BASE_URL}/dogs/breeds`, {
+            fetch(`${FETCH_BASE_URL}/dogs/breeds`, {
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 method: 'GET',
                 credentials: 'include'
-            }).then((res) => res.json())
-
-            setAllBreeds(result)
+            })
+                .then((res) => {
+                    if (res.status === 200) {
+                        return res.json()
+                    } else {
+                        setSnackbar({
+                            message: `${res.status} - Something went wrong!`,
+                            color: colors.light.error
+                        })
+                        setShowSnackbar(true)
+                    }
+                })
+                .then((data) => setAllBreeds(data))
         } catch (e) {
-            console.log(e)
             setSnackbar({ message: 'Could not get breeds!', color: colors.light.error })
             setShowSnackbar(true)
         }
@@ -76,21 +85,12 @@ export const BreedFilter: FunctionComponent<BreedFilterProps> = (props) => {
     }
 
     return (
-        <Container sx={{ flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-            <Typography
-                variant="field"
-                sx={{
-                    color: light ? colors.dark.background : colors.light.background,
-                    marginBottom: '0px'
-                }}
-            >
-                Breed
-            </Typography>
+        <Container sx={{ flexDirection: 'column', flex: 1, overflow: 'auto' }}>
             <Container
                 sx={{
                     flexDirection: 'column',
                     flex: 1,
-                    overflow: 'auto'
+                    overflow: mobile.mobile ? undefined : 'auto'
                 }}
             >
                 {loading ? (

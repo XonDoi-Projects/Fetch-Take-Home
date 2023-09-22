@@ -1,12 +1,17 @@
-import { FunctionComponent, useState } from 'react'
+import { FunctionComponent, useMemo, useState } from 'react'
 import { Dog } from '../../../api'
 import { Container } from '../../layoutComponents'
 import { useDarkTheme, useSize } from '../../../providers'
 import { colors } from '../../Colors'
 import { Typography } from '../../layoutComponents/Typography'
+import { BiSolidStar, BiStar } from 'react-icons/bi'
+import { Button } from '../../inputComponents'
+import { cloneDeep } from 'lodash'
 
 export interface DogCardProps {
     dog: Dog
+    favorites?: string[]
+    setFavorites?: (value: string[]) => void
 }
 
 export const DogCard: FunctionComponent<DogCardProps> = (props) => {
@@ -14,6 +19,27 @@ export const DogCard: FunctionComponent<DogCardProps> = (props) => {
     const mobile = useSize()
 
     const [hover, setHover] = useState(false)
+
+    const isFavorite = useMemo(
+        () => props.favorites?.includes(props.dog.id),
+        [props.dog.id, props.favorites]
+    )
+
+    const handleFavorites = () => {
+        const tempFavorites = cloneDeep(props.favorites)
+
+        if (tempFavorites) {
+            let match = tempFavorites.findIndex((temp) => temp === props.dog.id)
+
+            if (match >= 0) {
+                tempFavorites?.splice(match, 1)
+            } else {
+                tempFavorites?.push(props.dog.id)
+            }
+
+            props.setFavorites && props.setFavorites(tempFavorites)
+        }
+    }
 
     return (
         <Container
@@ -32,6 +58,35 @@ export const DogCard: FunctionComponent<DogCardProps> = (props) => {
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
+            <Container sx={{ position: 'absolute', top: 0, right: 0 }}>
+                <Button
+                    sx={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        padding: '0px',
+                        backgroundColor: 'transparent',
+                        zIndex: 1
+                    }}
+                    onClick={handleFavorites}
+                >
+                    {isFavorite ? (
+                        <BiSolidStar
+                            style={{
+                                fontSize: '30px',
+                                fill: light ? colors.light.accent : colors.dark.accent
+                            }}
+                        />
+                    ) : (
+                        <BiStar
+                            style={{
+                                fontSize: '30px',
+                                stroke: light ? colors.light.accent : colors.dark.accent
+                            }}
+                        />
+                    )}
+                </Button>
+            </Container>
             <Container
                 sx={{
                     height: '200px',
@@ -69,7 +124,6 @@ export const DogCard: FunctionComponent<DogCardProps> = (props) => {
                         fontWeight: 'bolder',
                         color: light ? colors.light.textOnAccent : colors.dark.textOnAccent,
                         backgroundColor: light ? colors.light.accent : colors.dark.accent,
-                        // borderRadius: '8px',
                         padding: '5px 0px',
                         fontSize: '19px'
                     }}

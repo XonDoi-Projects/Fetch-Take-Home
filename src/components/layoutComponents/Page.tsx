@@ -41,6 +41,7 @@ export const Page: FunctionComponent<PageProps> = (props) => {
                 overflowY: mobile.mobile ? 'auto' : 'hidden',
                 overflowX: 'hidden',
                 backgroundColor: light ? colors.light.background : colors.dark.background,
+                alignItems: 'center',
                 ...props.sx
             }}
             hidescrollBar
