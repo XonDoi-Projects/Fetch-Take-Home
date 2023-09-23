@@ -17,6 +17,7 @@ export interface TextFieldProps
     extends StyledInputProps,
         Omit<FieldContainerProps, 'sx' | 'children' | 'isFocus'> {
     fieldContainerSx?: CSSProperties
+    containerSx?: CSSProperties
     value: string
     onChange: (value: string) => void
     onFocus?: () => void
@@ -53,7 +54,17 @@ const StyledInput = styled.input<StyledInputProps>(
 
 export const TextField: FunctionComponent<TextFieldProps> = forwardRef(
     (
-        { value, onChange, onFocus, onBlur, onKeyPress, sx, fieldContainerSx, ...props },
+        {
+            value,
+            onChange,
+            onFocus,
+            onBlur,
+            onKeyPress,
+            sx,
+            fieldContainerSx,
+            containerSx,
+            ...props
+        },
         ref: ForwardedRef<HTMLInputElement>
     ) => {
         const { light } = useDarkTheme()
@@ -64,7 +75,12 @@ export const TextField: FunctionComponent<TextFieldProps> = forwardRef(
         }
 
         return (
-            <FieldContainer sx={fieldContainerSx} {...props} isFocus={isFocus}>
+            <FieldContainer
+                sx={fieldContainerSx}
+                parentSx={containerSx}
+                {...props}
+                isFocus={isFocus}
+            >
                 <StyledInput
                     ref={ref}
                     type={props.type || 'text'}

@@ -6,6 +6,7 @@ import { useDarkTheme } from '../../providers'
 
 export interface FieldContainerProps {
     sx?: CSSProperties
+    parentSx?: CSSProperties
     label?: string
     errorText?: string
     helperText?: string
@@ -14,10 +15,10 @@ export interface FieldContainerProps {
     hideHelper?: boolean
 }
 
-export const FieldContainer: FunctionComponent<FieldContainerProps> = (props) => {
+export const FieldContainer: FunctionComponent<FieldContainerProps> = ({ parentSx, ...props }) => {
     const { light } = useDarkTheme()
     return (
-        <Container sx={{ flexDirection: 'column' }}>
+        <Container sx={{ flexDirection: 'column', ...parentSx }}>
             <Container>
                 <Typography
                     variant="field"
