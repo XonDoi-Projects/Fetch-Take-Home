@@ -48,7 +48,6 @@ export const Page: FunctionComponent<PageProps> = (props) => {
         >
             <Header />
             {props.children}
-            {/* <Footer /> */}
         </Container>
     )
 }

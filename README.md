@@ -4,6 +4,8 @@ This project was created using the command `npx create-react-app my-ts-app --tem
 
 Follow the steps below to run the project locally.
 
+NPM and Node.js must both be installed on your local PC for the project to run.
+
 ## Clone
 
 Clone the project locally by using this command ``.
@@ -23,11 +25,13 @@ Apart from the login page, for this exercise everything is set up to work on the
 Once navigated to `/` the user will immediately be shown dogs obtained from the provided backend.
 
 The user has the ability to search by:
+
 1. Breed
 2. Zip Code
 3. Age
 
 Additionally, the user may also paginate through the results, and sort by:
+
 1. Breed
 2. Age
 3. Name
