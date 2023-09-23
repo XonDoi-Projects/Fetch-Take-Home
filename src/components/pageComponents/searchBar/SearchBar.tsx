@@ -183,7 +183,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                     }
                 })
 
-                const uniqueZipCodes = new Set([...dogs.map((dog) => dog.zip_code)])
+                const uniqueZipCodes = new Set([...dogs.map((dog) => dog?.zip_code)])
 
                 const locations: Location[] = await fetch(`${FETCH_BASE_URL}/locations`, {
                     headers: {
@@ -214,7 +214,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
 
                 const dogWithLocations = dogs.map((dog) => ({
                     ...dog,
-                    ...locations.find((location) => location.zip_code === dog.zip_code)
+                    ...locations?.find((location) => location?.zip_code === dog?.zip_code)
                 }))
 
                 setDogs(dogWithLocations)
@@ -354,7 +354,10 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
 
                 <Container sx={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Button
-                        onClick={() => setDirty(true)}
+                        onClick={() => {
+                            props.setFrom('0')
+                            setDirty(true)
+                        }}
                         sx={{
                             borderRadius: '19px',
                             color: light ? colors.light.textOnAccent : colors.dark.textOnAccent,
