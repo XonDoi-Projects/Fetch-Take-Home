@@ -1,14 +1,15 @@
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Dog, SearchQueryParams } from '../../../api'
+import { Dog, DogLocation, Location, SearchQueryParams } from '../../../api'
 import { Container, FadeInOut, FixedDiv } from '../../layoutComponents'
 import { Autocomplete, Button, TextField } from '../../inputComponents'
 import { colors } from '../../Colors'
 import { Typography } from '../../layoutComponents/Typography'
-import { useDarkTheme, useSize } from '../../../providers'
+import { useDarkTheme, useSize, useUser } from '../../../providers'
 import { FETCH_BASE_URL } from '../../env'
 import { BreedFilter } from './BreedFilter'
 import { ZipCodeFilter } from './ZipCodeFilter'
 import { Sort } from '../dogs/DogGrid'
+import { useNavigate } from 'react-router-dom'
 
 export interface SearchBarProps {
     from: string
@@ -25,7 +26,7 @@ export interface SearchBarProps {
     setAgeMin: (value?: number) => void
     setAgeMax: (value?: number) => void
 
-    setDogs: (value: Dog[]) => void
+    setDogs: (value: DogLocation[]) => void
 
     setLoading: (value: boolean) => void
 
@@ -51,6 +52,8 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
 }) => {
     const { light } = useDarkTheme()
     const mobile = useSize()
+    const { setUser } = useUser()
+    const navigate = useNavigate()
 
     const [snackbar, setSnackbar] = useState<{ message: string; color: string }>()
     const [showSnackbar, setShowSnackbar] = useState(false)
@@ -134,6 +137,14 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                 ).then((res) => {
                     if (res.status === 200) {
                         return res.json()
+                    } else if (res.status === 401) {
+                        setUser(undefined)
+                        navigate('/login')
+                        setSnackbar({
+                            message: `${res.status} - Authentication Failure!`,
+                            color: colors.light.error
+                        })
+                        setShowSnackbar(true)
                     } else {
                         setSnackbar({
                             message: `${res.status} - Something went wrong!`,
@@ -155,6 +166,14 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                 }).then((res) => {
                     if (res.status === 200) {
                         return res.json()
+                    } else if (res.status === 401) {
+                        setUser(undefined)
+                        navigate('/login')
+                        setSnackbar({
+                            message: `${res.status} - Authentication Failure!`,
+                            color: colors.light.error
+                        })
+                        setShowSnackbar(true)
                     } else {
                         setSnackbar({
                             message: `${res.status} - Something went wrong!`,
@@ -164,12 +183,45 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                     }
                 })
 
-                setDogs(dogs)
+                const uniqueZipCodes = new Set([...dogs.map((dog) => dog.zip_code)])
+
+                const locations: Location[] = await fetch(`${FETCH_BASE_URL}/locations`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(Array.from(uniqueZipCodes)),
+                    method: 'POST',
+                    credentials: 'include'
+                }).then((res) => {
+                    if (res.status === 200) {
+                        return res.json()
+                    } else if (res.status === 401) {
+                        setUser(undefined)
+                        navigate('/login')
+                        setSnackbar({
+                            message: `${res.status} - Authentication Failure!`,
+                            color: colors.light.error
+                        })
+                        setShowSnackbar(true)
+                    } else {
+                        setSnackbar({
+                            message: `${res.status} - Something went wrong!`,
+                            color: colors.light.error
+                        })
+                        setShowSnackbar(true)
+                    }
+                })
+
+                const dogWithLocations = dogs.map((dog) => ({
+                    ...dog,
+                    ...locations.find((location) => location.zip_code === dog.zip_code)
+                }))
+
+                setDogs(dogWithLocations)
                 setTotal(result.total)
                 setDirty(false)
             } catch (e) {
-                console.log(e)
-                setSnackbar({ message: 'Could not get dogs!', color: colors.light.error })
+                setSnackbar({ message: 'Request failed!', color: colors.light.error })
                 setShowSnackbar(true)
             }
             setLoading(false)
@@ -177,13 +229,15 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
     }, [
         dirty,
         getQueryString,
+        navigate,
         props.from,
         props.size,
         props.sort,
         setDirty,
         setDogs,
         setLoading,
-        setTotal
+        setTotal,
+        setUser
     ])
 
     useEffect(() => {
@@ -288,7 +342,9 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                         variant="field"
                         sx={{
                             color: light ? colors.dark.background : colors.light.background,
-                            marginBottom: '0px'
+                            marginBottom: '0px',
+                            fontWeight: 'bold',
+                            letterSpacing: '1.2px'
                         }}
                     >
                         Breed

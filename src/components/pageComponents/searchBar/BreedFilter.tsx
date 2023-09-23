@@ -5,7 +5,8 @@ import { FETCH_BASE_URL } from '../../env'
 import { colors } from '../../Colors'
 import { Typography } from '../../layoutComponents/Typography'
 import { cloneDeep } from 'lodash'
-import { useSize } from '../../../providers'
+import { useSize, useUser } from '../../../providers'
+import { useNavigate } from 'react-router-dom'
 
 export interface BreedFilterProps {
     breeds: string[]
@@ -14,6 +15,9 @@ export interface BreedFilterProps {
 
 export const BreedFilter: FunctionComponent<BreedFilterProps> = (props) => {
     const mobile = useSize()
+    const { setUser } = useUser()
+    const navigate = useNavigate()
+
     const [allBreeds, setAllBreeds] = useState<string[]>([])
 
     const [loading, setLoading] = useState(false)
@@ -48,6 +52,14 @@ export const BreedFilter: FunctionComponent<BreedFilterProps> = (props) => {
                 .then((res) => {
                     if (res.status === 200) {
                         return res.json()
+                    } else if (res.status === 401) {
+                        setUser(undefined)
+                        navigate('/login')
+                        setSnackbar({
+                            message: `${res.status} - Authentication Failure!`,
+                            color: colors.light.error
+                        })
+                        setShowSnackbar(true)
                     } else {
                         setSnackbar({
                             message: `${res.status} - Something went wrong!`,
@@ -58,11 +70,11 @@ export const BreedFilter: FunctionComponent<BreedFilterProps> = (props) => {
                 })
                 .then((data) => setAllBreeds(data))
         } catch (e) {
-            setSnackbar({ message: 'Could not get breeds!', color: colors.light.error })
+            setSnackbar({ message: 'Request failed!', color: colors.light.error })
             setShowSnackbar(true)
         }
         setLoading(false)
-    }, [setLoading])
+    }, [navigate, setUser])
 
     useEffect(() => {
         pullBreeds()

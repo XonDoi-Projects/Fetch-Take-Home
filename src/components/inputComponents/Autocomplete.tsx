@@ -1,10 +1,8 @@
 import { FunctionComponent, useEffect, useRef, useState } from 'react'
 import { TextField, TextFieldProps } from './TextField'
 import { useClickOutside } from '../hooks'
-import { Container, Popup } from '../layoutComponents'
-import { useDarkTheme, useSize } from '../../providers'
-import { Typography } from '../layoutComponents/Typography'
-import { colors } from '../Colors'
+import { Container, OptionButton, Popup } from '../layoutComponents'
+import { useSize } from '../../providers'
 import { Button } from './Button'
 import { BiChevronDown } from 'react-icons/bi'
 
@@ -14,7 +12,6 @@ export interface AutocompleteProps extends Omit<TextFieldProps, 'type'> {
 
 export const Autocomplete: FunctionComponent<AutocompleteProps> = ({ onChange, ...props }) => {
     const { mobile } = useSize()
-    const { light } = useDarkTheme()
 
     const [show, setShow] = useState(false)
 
@@ -61,30 +58,27 @@ export const Autocomplete: FunctionComponent<AutocompleteProps> = ({ onChange, .
                     width: textDOMRect ? textDOMRect?.width + 30 : 100,
                     top: textDOMRect ? textDOMRect?.height + 10 : 0,
                     left: 0,
-                    borderRadius: '4px',
-                    border: '1px solid',
-                    borderColor: light ? colors.dark.background : colors.light.background,
+                    borderRadius: '10px',
                     height: 'fit-content'
                 }}
             >
-                {props.list.map((item, index) => (
-                    <Container
-                        key={index}
-                        sx={{
-                            display: 'flex',
-                            padding: '5px',
-                            alignItems: 'center'
-                        }}
-                        onClick={() => {
-                            onChange(item)
-                            setShow(false)
-                        }}
-                    >
-                        <Typography sx={{ fontWeight: 600, pointerEvents: 'none' }}>
-                            {item}
-                        </Typography>
-                    </Container>
-                ))}{' '}
+                <Container
+                    sx={{
+                        borderRadius: '10px',
+                        flexDirection: 'column',
+                        maxHeight: '200px',
+                        overflow: 'auto'
+                    }}
+                >
+                    {props.list.map((item, index) => (
+                        <OptionButton
+                            key={index}
+                            item={item}
+                            onChange={onChange}
+                            setShow={setShow}
+                        />
+                    ))}
+                </Container>
             </Popup>
         </Container>
     )

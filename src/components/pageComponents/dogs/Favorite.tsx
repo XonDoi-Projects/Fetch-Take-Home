@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react'
-import { Dog } from '../../../api'
+import { DogLocation } from '../../../api'
 import { Card, Container, Cover, FixedDiv } from '../../layoutComponents'
 import { Typography } from '../../layoutComponents/Typography'
 import { Button } from '../../inputComponents'
@@ -8,7 +8,7 @@ import { keyframes } from '@emotion/react'
 import { useSize } from '../../../providers'
 
 export interface FavoriteProps {
-    dog: Dog
+    dog: DogLocation
     show: boolean
     setShow: (value: boolean) => void
 }
@@ -43,9 +43,10 @@ export const Favorite: FunctionComponent<FavoriteProps> = (props) => {
                     width: mobile.mobile ? '250px' : '400px',
                     height: '400px',
                     gap: '10px',
-                    padding: '20px',
+                    padding: '5px',
                     alignItems: 'flex-end',
                     animation: `${oscillate} 2s ease`,
+                    borderRadius: '10px',
                     zIndex: 4
                 }}
             >
@@ -59,7 +60,7 @@ export const Favorite: FunctionComponent<FavoriteProps> = (props) => {
                     }}
                     onClick={() => props.setShow(false)}
                 >
-                    <BiX style={{ fontSize: '20px' }} />
+                    <BiX style={{ fontSize: '24px' }} />
                 </Button>
                 <Typography
                     sx={{
@@ -73,7 +74,7 @@ export const Favorite: FunctionComponent<FavoriteProps> = (props) => {
                     variant="subtitle"
                     sx={{
                         width: '100%',
-                        fontSize: '20px',
+                        fontSize: '22px',
                         textTransform: 'uppercase',
                         fontWeight: 'bold',
                         textAlign: 'center'
@@ -117,7 +118,7 @@ export const Favorite: FunctionComponent<FavoriteProps> = (props) => {
                             width: '100%',
                             gap: '5px',
                             padding: '5px',
-                            justifyContent: 'space-between'
+                            justifyContent: 'space-evenly'
                         }}
                     >
                         <Typography sx={{ textAlign: 'center', wordBreak: 'break-word' }}>
@@ -126,9 +127,9 @@ export const Favorite: FunctionComponent<FavoriteProps> = (props) => {
 
                         <Typography
                             variant="small"
-                            sx={{ textAlign: 'center', wordBreak: 'break-word' }}
+                            sx={{ textAlign: 'center', wordBreak: 'break-word', fontSize: '14px' }}
                         >
-                            Zip Code: {props.dog.zip_code}
+                            {`${props.dog.city} ${props.dog.state} ${props.dog.zip_code}`}
                         </Typography>
                     </Container>
                 </Container>

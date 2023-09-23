@@ -35,7 +35,7 @@ export const Logout = () => {
             })
         } catch (e: any) {
             setSnackbar({
-                message: e.message,
+                message: 'Request failed!',
                 color: colors.light.error
             })
             setShowSnackbar(true)

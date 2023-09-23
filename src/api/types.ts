@@ -14,10 +14,13 @@ export interface Location {
     state: string
     county: string
 }
+
 export interface Coordinates {
     lat: number
     lon: number
 }
+
+export interface DogLocation extends Dog, Partial<Omit<Location, 'zip_code'>> {}
 
 export interface SearchQueryParams {
     breeds: string[]

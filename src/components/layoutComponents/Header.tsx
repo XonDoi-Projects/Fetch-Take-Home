@@ -3,7 +3,7 @@ import { Container } from './Container'
 import { BiMenu, BiAdjust } from 'react-icons/bi'
 import { colors } from '../Colors'
 import { Link } from 'react-router-dom'
-import { useSize, useDarkTheme } from '../../providers'
+import { useSize, useDarkTheme, useUser } from '../../providers'
 import { Button } from '../inputComponents'
 import { Typography } from './Typography'
 import { useClickOutside } from '../hooks'
@@ -18,6 +18,7 @@ const nav = [{ name: 'Logout', link: '/logout' }]
 
 export const Header: FunctionComponent<HeaderProps> = (props) => {
     const { mobile, size } = useSize()
+    const { user } = useUser()
     const { light, setLight } = useDarkTheme()
 
     const [show, setShow] = useState(false)
@@ -87,7 +88,7 @@ export const Header: FunctionComponent<HeaderProps> = (props) => {
                         <BiAdjust style={{ fontSize: '30px' }} />
                     </Button>
                     <Container sx={{ width: '10px' }} />
-                    {!mobile ? (
+                    {user && !mobile ? (
                         nav.map((item, index) => (
                             <Link
                                 key={index}
@@ -104,7 +105,7 @@ export const Header: FunctionComponent<HeaderProps> = (props) => {
                                 </Typography>
                             </Link>
                         ))
-                    ) : (
+                    ) : user ? (
                         <>
                             <Button
                                 sx={{
@@ -143,6 +144,8 @@ export const Header: FunctionComponent<HeaderProps> = (props) => {
                                 ))}
                             </Popup>
                         </>
+                    ) : (
+                        <></>
                     )}
                 </Container>
             </Container>

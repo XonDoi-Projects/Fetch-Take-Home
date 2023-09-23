@@ -3,19 +3,21 @@ import { useDarkTheme, useSize, useUser } from '../../providers'
 import { Container, FadeInOut, FixedDiv, Overlay } from '../layoutComponents'
 import { Typography } from '../layoutComponents/Typography'
 import { SearchBar } from './searchBar'
-import { Dog, Match } from '../../api'
+import { Dog, DogLocation, Location, Match } from '../../api'
 import { DogGrid, Sort } from './dogs/DogGrid'
 import { Button } from '../inputComponents'
-import { BiFilter, BiX } from 'react-icons/bi'
+import { BiFilter, BiSolidHeart, BiX } from 'react-icons/bi'
 import { isEqual } from 'lodash'
 import { colors } from '../Colors'
 import { FETCH_BASE_URL } from '../env'
 import { Favorite } from './dogs/Favorite'
+import { useNavigate } from 'react-router-dom'
 
 export const Home = () => {
     const mobile = useSize()
-    const { user } = useUser()
+    const { user, setUser } = useUser()
     const { light } = useDarkTheme()
+    const navigate = useNavigate()
 
     const [breeds, setBreeds] = useState<string[]>([])
     const [zipCodes, setZipCodes] = useState<string[]>([])
@@ -23,11 +25,11 @@ export const Home = () => {
     const [ageMax, setAgeMax] = useState<number>()
     const [favorites, setFavorites] = useState<string[]>([])
 
-    const [favorite, setFavorite] = useState<Dog>()
+    const [favorite, setFavorite] = useState<DogLocation>()
 
     const [size, setSize] = useState('25')
     const [from, setFrom] = useState('0')
-    const [dogs, setDogs] = useState<Dog[]>([])
+    const [dogs, setDogs] = useState<DogLocation[]>([])
     const [total, setTotal] = useState<string>('')
     const [sort, setSort] = useState<Sort>({ breed: 'asc' })
 
@@ -108,6 +110,14 @@ export const Home = () => {
             }).then((res) => {
                 if (res.status === 200) {
                     return res.json()
+                } else if (res.status === 401) {
+                    setUser(undefined)
+                    navigate('/login')
+                    setSnackbar({
+                        message: `${res.status} - Authentication Failure!`,
+                        color: colors.light.error
+                    })
+                    setShowSnackbar(true)
                 } else {
                     setSnackbar({
                         message: `${res.status} - Something went wrong!`,
@@ -129,6 +139,14 @@ export const Home = () => {
             }).then((res) => {
                 if (res.status === 200) {
                     return res.json()
+                } else if (res.status === 401) {
+                    setUser(undefined)
+                    navigate('/login')
+                    setSnackbar({
+                        message: `${res.status} - Authentication Failure!`,
+                        color: colors.light.error
+                    })
+                    setShowSnackbar(true)
                 } else {
                     setSnackbar({
                         message: `${res.status} - Something went wrong!`,
@@ -138,9 +156,44 @@ export const Home = () => {
                 }
             })
 
-            setFavorite(dog[0])
+            const locations: Location[] = await fetch(`${FETCH_BASE_URL}/locations`, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dog[0]),
+                method: 'POST',
+                credentials: 'include'
+            }).then((res) => {
+                if (res.status === 200) {
+                    return res.json()
+                } else if (res.status === 401) {
+                    setUser(undefined)
+                    navigate('/login')
+                    setSnackbar({
+                        message: `${res.status} - Authentication Failure!`,
+                        color: colors.light.error
+                    })
+                    setShowSnackbar(true)
+                } else {
+                    setSnackbar({
+                        message: `${res.status} - Something went wrong!`,
+                        color: colors.light.error
+                    })
+                    setShowSnackbar(true)
+                }
+            })
+
+            const dogWithLocations = dogs.map((dog) => ({
+                ...dog,
+                ...locations.find((location) => location.zip_code === dog.zip_code)
+            }))
+
+            setFavorite(dogWithLocations[0])
             setShowFavorite(true)
-        } catch (e) {}
+        } catch (e) {
+            setSnackbar({ message: 'Request failed!', color: colors.light.error })
+            setShowSnackbar(true)
+        }
 
         setLoadingMatch(false)
     }
@@ -153,7 +206,8 @@ export const Home = () => {
                 padding: '20px',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                width: '100%'
             }}
         >
             <Container
@@ -240,14 +294,14 @@ export const Home = () => {
                         flexDirection: 'column',
                         flex: 1,
                         flexWrap: 'wrap',
-                        alignContent: mobile.mobile ? 'space-between' : 'flex-end'
+                        alignContent: mobile.mobile ? 'space-between' : 'flex-start'
                     }}
                 >
                     <Typography
                         variant="title"
                         sx={{ textAlign: 'left' }}
                     >{`Hi ${user?.name},`}</Typography>
-                    <Typography sx={{ marginBottom: '20px', textAlign: 'left' }}>
+                    <Typography sx={{ marginBottom: '20px', textAlign: 'left', width: '100%' }}>
                         Let's find you the perfect dog!
                     </Typography>
 
@@ -255,7 +309,7 @@ export const Home = () => {
                         sx={{
                             flexDirection: 'row',
                             marginBottom: '20px',
-                            justifyContent: mobile.mobile ? 'space-between' : 'flex-end',
+                            justifyContent: 'space-between',
                             alignItems: 'center'
                         }}
                     >
@@ -275,6 +329,45 @@ export const Home = () => {
                         ) : (
                             <></>
                         )}
+                        <Container
+                            sx={{
+                                flexDirection: 'row',
+                                width: 'fit-content',
+                                alignItems: 'center',
+                                gap: '5px'
+                            }}
+                        >
+                            <BiSolidHeart
+                                style={{
+                                    fontStyle: '15px',
+                                    color: light ? colors.light.heart : colors.dark.heart
+                                }}
+                            />
+                            <Typography
+                                variant={mobile.mobile ? 'small' : 'body'}
+                            >{`${favorites.length}`}</Typography>
+                            <Button
+                                onClick={() => setFavorites([])}
+                                sx={{
+                                    height: '20px',
+                                    borderRadius: '19px',
+                                    backgroundColor: light
+                                        ? colors.light.background
+                                        : colors.dark.background
+                                }}
+                                loading={loadingMatch}
+                            >
+                                <Typography
+                                    variant="small"
+                                    sx={{
+                                        color: light ? colors.light.accent : colors.dark.accent,
+                                        fontWeight: 'bold'
+                                    }}
+                                >
+                                    Clear
+                                </Typography>
+                            </Button>
+                        </Container>
 
                         <Button
                             onClick={handleMatch}

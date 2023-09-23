@@ -33,7 +33,9 @@ export const FieldContainer: FunctionComponent<FieldContainerProps> = (props) =>
                             : light
                             ? colors.dark.background
                             : colors.light.background,
-                        marginBottom: '0px'
+                        marginBottom: '0px',
+                        fontWeight: 'bold',
+                        letterSpacing: '1.2px'
                     }}
                 >
                     {props.label || ''}

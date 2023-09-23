@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react'
+import { FunctionComponent, useEffect, useMemo, useRef, useState } from 'react'
 import { Dog } from '../../../api'
 import { Container, Spinner } from '../../layoutComponents'
 import { DogCard } from './DogCard'
@@ -38,6 +38,16 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
     const { light } = useDarkTheme()
     const mobile = useSize()
 
+    const ref = useRef<HTMLDivElement>(null)
+
+    const [dogGridDOMwidth, setDogGridDOMWidth] = useState<number>()
+
+    useEffect(() => {
+        if (ref.current) {
+            setDogGridDOMWidth(ref.current.getBoundingClientRect().width)
+        }
+    }, [mobile.size])
+
     const handleNext = () => {
         const newFrom = parseInt(props.from) + parseInt(props.size)
         props.setFrom(newFrom.toString())
@@ -50,12 +60,22 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
         props.setDirty(true)
     }
 
+    const cardsToFit = useMemo(() => {
+        if (dogGridDOMwidth) {
+            const n = Math.floor(1 + (dogGridDOMwidth - 240) / 225)
+
+            return n > 5 ? 5 : n
+        }
+        return 5
+    }, [dogGridDOMwidth])
+
     return (
         <Container
+            ref={ref}
             sx={{
                 flexDirection: 'row',
                 flex: 1,
-                maxWidth: '1170px',
+                maxWidth: '100%',
                 overflow: 'hidden'
             }}
         >
@@ -63,6 +83,7 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
                 <Container
                     sx={{
                         flexDirection: 'row',
+                        flex: 1,
                         width: '100%',
                         height: '100%',
                         justifyContent: 'center',
@@ -124,7 +145,8 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
                             flex: 1,
                             flexWrap: 'wrap',
                             width: '100%',
-                            gap: '25px',
+                            columnGap: '25px',
+                            rowGap: '25px',
                             justifyContent: 'flex-start',
                             alignItems: 'flex-start',
                             overflow: 'auto',
@@ -137,6 +159,13 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
                                 dog={dog}
                                 favorites={props.favorites}
                                 setFavorites={props.setFavorites}
+                                width={
+                                    ((dogGridDOMwidth || 0) - (cardsToFit * 25 + 40)) / cardsToFit >
+                                    200
+                                        ? ((dogGridDOMwidth || 0) - (cardsToFit * 25 + 40)) /
+                                          cardsToFit
+                                        : 200
+                                }
                             />
                         ))}
                     </Container>
@@ -155,39 +184,42 @@ export const DogGrid: FunctionComponent<DogGridProps> = (props) => {
                             parseInt(props.from) + parseInt(props.size)
                         } of ${props.total} results`}</Typography>
                         <Container sx={{ flexDirection: 'row', gap: '10px' }}>
-                            {parseInt(props.from) <= 0 ? (
-                                <></>
-                            ) : (
-                                <Button
-                                    onClick={handlePrevious}
-                                    sx={{
-                                        width: '30px',
-                                        height: '30px',
-                                        borderRadius: '50%',
-                                        padding: '0px',
-                                        backgroundColor: 'transparent'
-                                    }}
-                                >
-                                    <BiChevronLeft style={{ fontSize: '30px' }} />
-                                </Button>
-                            )}
-                            {parseInt(props.from) + parseInt(props.size) >=
-                            parseInt(props.total) ? (
-                                <></>
-                            ) : (
-                                <Button
-                                    onClick={handleNext}
-                                    sx={{
-                                        width: '30px',
-                                        height: '30px',
-                                        borderRadius: '50%',
-                                        padding: '0px',
-                                        backgroundColor: 'transparent'
-                                    }}
-                                >
-                                    <BiChevronRight style={{ fontSize: '30px' }} />
-                                </Button>
-                            )}
+                            <Button
+                                onClick={handlePrevious}
+                                sx={{
+                                    width: '30px',
+                                    height: '30px',
+                                    borderRadius: '50%',
+                                    padding: '0px',
+                                    backgroundColor: 'transparent',
+                                    opacity: parseInt(props.from) <= 0 ? '0.5' : '1'
+                                }}
+                                disabled={parseInt(props.from) <= 0}
+                            >
+                                <BiChevronLeft style={{ fontSize: '30px' }} />
+                            </Button>
+
+                            <Button
+                                onClick={handleNext}
+                                sx={{
+                                    width: '30px',
+                                    height: '30px',
+                                    borderRadius: '50%',
+                                    padding: '0px',
+                                    backgroundColor: 'transparent',
+                                    opacity:
+                                        parseInt(props.from) + parseInt(props.size) >=
+                                        parseInt(props.total)
+                                            ? '0.5'
+                                            : '1'
+                                }}
+                                disabled={
+                                    parseInt(props.from) + parseInt(props.size) >=
+                                    parseInt(props.total)
+                                }
+                            >
+                                <BiChevronRight style={{ fontSize: '30px' }} />
+                            </Button>
                         </Container>
                     </Container>
                 </Container>

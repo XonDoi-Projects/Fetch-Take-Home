@@ -132,7 +132,8 @@ export const Checkbox: FunctionComponent<CheckboxProps> = ({ onChange, ...props 
                     {renderCheckbox()}
                     <Typography
                         sx={{
-                            textTransform: 'uppercase',
+                            fontFamily: 'Roboto, sans-serif',
+                            fontSize: '16px',
                             color: light ? colors.dark.background : colors.light.background,
                             ...props.typographySx
                         }}

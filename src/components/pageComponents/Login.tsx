@@ -61,7 +61,7 @@ export const Login = () => {
             })
             setShowSnackbar(true)
         } catch (e: any) {
-            setSnackbar({ message: e.message, color: colors.light.error })
+            setSnackbar({ message: 'Request failed!', color: colors.light.error })
             setShowSnackbar(true)
         }
         setLoading(false)
@@ -80,7 +80,7 @@ export const Login = () => {
                 }}
             >
                 <Typography variant="subtitle" sx={{ width: '100%', textAlign: 'left' }}>
-                    Login!
+                    Please login to continue
                 </Typography>
                 <Container sx={{ flexDirection: 'column', width: '100%' }}>
                     <TextField

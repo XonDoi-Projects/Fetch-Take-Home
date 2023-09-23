@@ -1,17 +1,18 @@
 import { FunctionComponent, useMemo, useState } from 'react'
-import { Dog } from '../../../api'
+import { DogLocation } from '../../../api'
 import { Container } from '../../layoutComponents'
 import { useDarkTheme, useSize } from '../../../providers'
 import { colors } from '../../Colors'
 import { Typography } from '../../layoutComponents/Typography'
-import { BiSolidStar, BiStar } from 'react-icons/bi'
+import { BiSolidHeart, BiHeart } from 'react-icons/bi'
 import { Button } from '../../inputComponents'
 import { cloneDeep } from 'lodash'
 
 export interface DogCardProps {
-    dog: Dog
+    dog: DogLocation
     favorites?: string[]
     setFavorites?: (value: string[]) => void
+    width: number
 }
 
 export const DogCard: FunctionComponent<DogCardProps> = (props) => {
@@ -46,7 +47,7 @@ export const DogCard: FunctionComponent<DogCardProps> = (props) => {
             sx={{
                 flex: mobile.mobile ? 1 : undefined,
                 flexDirection: 'column',
-                width: '200px',
+                width: props.width + 'px',
                 height: '330px',
                 borderRadius: '10px',
                 backgroundColor: light ? colors.light.card : colors.dark.card,
@@ -71,17 +72,23 @@ export const DogCard: FunctionComponent<DogCardProps> = (props) => {
                     onClick={handleFavorites}
                 >
                     {isFavorite ? (
-                        <BiSolidStar
+                        <BiSolidHeart
                             style={{
                                 fontSize: '30px',
-                                fill: light ? colors.light.accent : colors.dark.accent
+                                fill: light ? colors.light.heart : colors.dark.heart,
+                                filter: `drop-shadow(0px 0px 4px ${
+                                    light ? colors.light.heart : colors.dark.heart
+                                })`
                             }}
                         />
                     ) : (
-                        <BiStar
+                        <BiHeart
                             style={{
                                 fontSize: '30px',
-                                stroke: light ? colors.light.accent : colors.dark.accent
+                                fill: light ? colors.light.heart : colors.dark.heart,
+                                filter: `drop-shadow(0px 0px 4px ${
+                                    light ? colors.light.heart : colors.dark.heart
+                                })`
                             }}
                         />
                     )}
@@ -135,7 +142,7 @@ export const DogCard: FunctionComponent<DogCardProps> = (props) => {
                 </Typography>
 
                 <Typography variant="small" sx={{ textAlign: 'center', wordBreak: 'break-word' }}>
-                    Zip Code: {props.dog.zip_code}
+                    {`${props.dog.city} ${props.dog.state} ${props.dog.zip_code}`}
                 </Typography>
             </Container>
         </Container>

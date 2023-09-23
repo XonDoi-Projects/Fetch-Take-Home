@@ -28,7 +28,7 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
                     flexDirection: 'column',
                     width: '100%',
                     height: '100%',
-                    borderRadius: '0px'
+                    borderRadius: '10px'
                 }}
             >
                 {props.children}
