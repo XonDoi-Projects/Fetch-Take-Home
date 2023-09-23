@@ -28,26 +28,18 @@ const FadeInOutDiv = styled(Container)<FadeInOutProps>(({ show, sx }) => ({
 const showFrames = keyframes({
     from: {
         opacity: 0
-        // width: '0%',
-        // height: '0%'
     },
     to: {
         opacity: 1
-        // width: '100%',
-        // height: '100%'
     }
 })
 
 const hideFrames = keyframes({
     from: {
         opacity: 1
-        // width: '100%',
-        // height: '100%'
     },
     to: {
         opacity: 0
-        // width: '0%',
-        // height: '0%'
     }
 })
 

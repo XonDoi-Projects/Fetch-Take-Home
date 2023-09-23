@@ -9,7 +9,6 @@ export interface StyledContainerProps extends HTMLProps<HTMLDivElement> {
     ref?: Ref<HTMLDivElement>
     light?: boolean
     swapScrollBar?: boolean
-    // onWheel?: () => void
 }
 
 export const StyledContainer = styled.div<StyledContainerProps>(

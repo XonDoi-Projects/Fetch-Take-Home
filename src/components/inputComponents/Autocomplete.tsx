@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useRef, useState } from 'react'
+import { FunctionComponent, useLayoutEffect, useRef, useState } from 'react'
 import { TextField, TextFieldProps } from './TextField'
 import { useClickOutside } from '../hooks'
 import { Container, OptionButton, Popup } from '../layoutComponents'
@@ -20,7 +20,7 @@ export const Autocomplete: FunctionComponent<AutocompleteProps> = ({ onChange, .
 
     const [textDOMRect, setTextDOMRect] = useState<DOMRect>()
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (ref.current) {
             setTextDOMRect(ref.current.getBoundingClientRect())
         }
@@ -29,9 +29,8 @@ export const Autocomplete: FunctionComponent<AutocompleteProps> = ({ onChange, .
     useClickOutside(popupRef, () => setShow(false))
 
     return (
-        <Container sx={props.containerSx}>
+        <Container ref={ref} sx={props.containerSx}>
             <TextField
-                ref={ref}
                 {...props}
                 onChange={() => null}
                 fieldContainerSx={{ paddingRight: '10px' }}
@@ -55,8 +54,8 @@ export const Autocomplete: FunctionComponent<AutocompleteProps> = ({ onChange, .
                 popupRef={popupRef}
                 show={show}
                 sx={{
-                    width: textDOMRect ? textDOMRect?.width + 30 : 100,
-                    top: textDOMRect ? textDOMRect?.height + 10 : 0,
+                    width: textDOMRect ? textDOMRect?.width : 100,
+                    top: textDOMRect ? textDOMRect?.height : 0,
                     left: 0,
                     borderRadius: '10px',
                     height: 'fit-content'
