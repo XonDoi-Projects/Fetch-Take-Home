@@ -272,7 +272,8 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                         <Container
                             sx={{
                                 flexDirection: 'row',
-                                width: '100%',
+                                gap: '10px',
+                                flexWrap: 'wrap',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
                                 backgroundColor: light ? colors.light.card : colors.dark.card
@@ -289,7 +290,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                                     'Name A-Z',
                                     'Name Z-A'
                                 ]}
-                                sx={{ flex: 1 }}
+                                containerSx={{ flex: 1 }}
                                 label="Sort"
                                 hideHelper
                             />
@@ -297,7 +298,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                                 value={props.size}
                                 onChange={(value) => props.handleSize && props.handleSize(value)}
                                 list={['25', '50', '100']}
-                                sx={{ width: '30px' }}
+                                containerSx={{ width: '100px' }}
                                 label="Size"
                                 hideHelper
                             />
@@ -322,7 +323,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                                 }
                             }}
                             label="Min Age (Years)"
-                            sx={{ width: '140px' }}
+                            containerSx={{ flex: 1 }}
                             hideHelper
                         />
                         <TextField
@@ -333,7 +334,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                                 }
                             }}
                             label="Max Age (Years)"
-                            sx={{ width: '140px' }}
+                            containerSx={{ flex: 1 }}
                             hideHelper
                         />
                     </Container>

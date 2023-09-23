@@ -29,7 +29,7 @@ export const Autocomplete: FunctionComponent<AutocompleteProps> = ({ onChange, .
     useClickOutside(popupRef, () => setShow(false))
 
     return (
-        <Container>
+        <Container sx={props.containerSx}>
             <TextField
                 ref={ref}
                 {...props}
