@@ -1,6 +1,6 @@
 # Fetch-Take-Home
 
-This project was created using the command `npx create-react-app my-ts-app --template typescript`. It makes use of React, Typescript and Emotion (used for styles).
+This project was created using the command `npx create-react-app my-ts-app --template typescript`. It makes use of React and Typescript. Additionally, Emotion package is used for Styles.
 
 Follow the steps below to run the project locally.
 
