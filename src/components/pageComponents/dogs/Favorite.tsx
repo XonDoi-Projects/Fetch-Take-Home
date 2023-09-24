@@ -129,7 +129,7 @@ export const Favorite: FunctionComponent<FavoriteProps> = (props) => {
                             variant="small"
                             sx={{ textAlign: 'center', wordBreak: 'break-word', fontSize: '14px' }}
                         >
-                            {`${props.dog.city} ${props.dog.state} ${props.dog.zip_code}`}
+                            {`${props.dog.city}, ${props.dog.state} · ${props.dog.zip_code}`}
                         </Typography>
                     </Container>
                 </Container>

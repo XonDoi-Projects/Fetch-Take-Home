@@ -4,6 +4,7 @@ import { colors } from '../Colors'
 import { useDarkTheme } from '../../providers'
 
 export interface StyledContainerProps extends HTMLProps<HTMLDivElement> {
+    'data-testid'?: string
     sx?: CSSProperties
     hidescrollBar?: boolean
     ref?: Ref<HTMLDivElement>
@@ -49,6 +50,7 @@ export const Container: FunctionComponent<StyledContainerProps> = forwardRef((pr
 
     return (
         <StyledContainer
+            data-testid={props['data-testid']}
             id={props.id}
             ref={ref}
             sx={{

@@ -5,6 +5,7 @@ import { colors } from '../Colors'
 import { useDarkTheme } from '../../providers'
 
 export interface SpinnerProps {
+    'data-testid'?: string
     sx?: CSSProperties
     spinnerSx?: CSSProperties
     swapColor?: boolean
@@ -26,6 +27,7 @@ export const Spinner: FunctionComponent<SpinnerProps> = (props) => {
 
     return (
         <Container
+            data-testid={props['data-testid']}
             sx={{
                 width: '30px',
                 height: '30px',

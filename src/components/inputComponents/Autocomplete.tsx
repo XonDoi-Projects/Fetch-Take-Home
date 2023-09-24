@@ -1,8 +1,7 @@
-import { FunctionComponent, useLayoutEffect, useRef, useState } from 'react'
+import { FunctionComponent, useEffect, useRef, useState } from 'react'
 import { TextField, TextFieldProps } from './TextField'
 import { useClickOutside } from '../hooks'
 import { Container, OptionButton, Popup } from '../layoutComponents'
-import { useSize } from '../../providers'
 import { Button } from './Button'
 import { BiChevronDown } from 'react-icons/bi'
 
@@ -11,8 +10,6 @@ export interface AutocompleteProps extends Omit<TextFieldProps, 'type'> {
 }
 
 export const Autocomplete: FunctionComponent<AutocompleteProps> = ({ onChange, ...props }) => {
-    const { mobile } = useSize()
-
     const [show, setShow] = useState(false)
 
     const ref = useRef<HTMLInputElement | null>(null)
@@ -20,11 +17,11 @@ export const Autocomplete: FunctionComponent<AutocompleteProps> = ({ onChange, .
 
     const [textDOMRect, setTextDOMRect] = useState<DOMRect>()
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (ref.current) {
             setTextDOMRect(ref.current.getBoundingClientRect())
         }
-    }, [mobile])
+    }, [show])
 
     useClickOutside(popupRef, () => setShow(false))
 

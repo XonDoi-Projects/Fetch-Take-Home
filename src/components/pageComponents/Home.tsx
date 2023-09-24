@@ -198,6 +198,10 @@ export const Home = () => {
         setLoadingMatch(false)
     }
 
+    useEffect(() => {
+        document.title = 'Take Home Exercise'
+    })
+
     return (
         <Container
             sx={{

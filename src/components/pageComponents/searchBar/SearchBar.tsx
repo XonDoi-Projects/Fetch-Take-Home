@@ -299,7 +299,7 @@ export const SearchBar: FunctionComponent<SearchBarProps> = ({
                                 onChange={(value) => props.handleSize && props.handleSize(value)}
                                 list={['25', '50', '100']}
                                 containerSx={{ width: '100px' }}
-                                label="Size"
+                                label="Show"
                                 hideHelper
                             />
                         </Container>
