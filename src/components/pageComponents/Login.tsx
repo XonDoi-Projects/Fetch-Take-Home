@@ -125,6 +125,10 @@ export const Login = () => {
         )
     }
 
+    useEffect(() => {
+        document.title = 'Login'
+    })
+
     return (
         <Container sx={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             {mobile.mobile ? (

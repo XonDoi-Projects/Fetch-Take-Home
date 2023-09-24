@@ -142,7 +142,7 @@ export const DogCard: FunctionComponent<DogCardProps> = (props) => {
                 </Typography>
 
                 <Typography variant="small" sx={{ textAlign: 'center', wordBreak: 'break-word' }}>
-                    {`${props.dog.city} ${props.dog.state} ${props.dog.zip_code}`}
+                    {`${props.dog.city}, ${props.dog.state} · ${props.dog.zip_code}`}
                 </Typography>
             </Container>
         </Container>
