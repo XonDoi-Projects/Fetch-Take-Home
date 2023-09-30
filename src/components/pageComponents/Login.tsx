@@ -37,33 +37,60 @@ export const Login = () => {
         }
     }, [showSnackbar])
 
+    const checkFields = () => {
+        let hasError = false
+
+        const emailPattern = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+        if (!email) {
+            hasError = true
+            setErrorEmail('Email is required!')
+        } else if (!emailPattern.test(email)) {
+            hasError = true
+            setErrorEmail('Invalid Email')
+        } else {
+            setErrorEmail('')
+        }
+
+        if (!name) {
+            hasError = true
+            setErrorName('Name is required!')
+        } else {
+            setErrorName('')
+        }
+
+        return hasError
+    }
+
     const handleLogin = () => {
         setLoading(true)
-        try {
-            fetch(`${FETCH_BASE_URL}/auth/login`, {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                method: 'POST',
-                body: JSON.stringify({ name, email }),
-                credentials: 'include'
-            }).then((res) => {
-                if (res.status === 200) {
-                    setSnackbar({ message: 'Login Successful!', color: colors.light.success })
-                    setUser({ name, email })
-                    navigate('/')
-                } else {
-                    setSnackbar({
-                        message: `${res.status} - Something went wrong!`,
-                        color: colors.light.error
-                    })
-                }
-            })
-            setShowSnackbar(true)
-        } catch (e: any) {
-            setSnackbar({ message: 'Request failed!', color: colors.light.error })
-            setShowSnackbar(true)
+        if (!checkFields()) {
+            try {
+                fetch(`${FETCH_BASE_URL}/auth/login`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'POST',
+                    body: JSON.stringify({ name, email }),
+                    credentials: 'include'
+                }).then((res) => {
+                    if (res.status === 200) {
+                        setSnackbar({ message: 'Login Successful!', color: colors.light.success })
+                        setUser({ name, email })
+                        navigate('/')
+                    } else {
+                        setSnackbar({
+                            message: `${res.status} - Something went wrong!`,
+                            color: colors.light.error
+                        })
+                    }
+                })
+                setShowSnackbar(true)
+            } catch (e: any) {
+                setSnackbar({ message: 'Request failed!', color: colors.light.error })
+                setShowSnackbar(true)
+            }
         }
+
         setLoading(false)
     }
 
@@ -106,6 +133,7 @@ export const Login = () => {
                         }}
                         errorText={errorEmail}
                         onKeyPress={handleLogin}
+                        type="email"
                     />
                 </Container>
                 <Button

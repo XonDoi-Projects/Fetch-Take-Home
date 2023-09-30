@@ -24,7 +24,7 @@ export interface TextFieldProps
     onKeyPress?: () => void
     onBlur?: (value: string) => void
     suffix?: ReactNode
-    type?: 'text' | 'password'
+    type?: 'text' | 'password' | 'email'
     ref?: Ref<HTMLInputElement>
     hideHelper?: boolean
 }
